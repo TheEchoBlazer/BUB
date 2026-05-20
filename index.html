@@ -15,7 +15,6 @@
       --accent-dark: #2f5f2f;
     }
     html,body{height:100%;margin:0;font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;background: linear-gradient(#86c6ff 0%, #87d1ff 50%, #cfefff 100%); color:#111;}
-    /* Pixel / blocky header */
     header{
       display:flex;align-items:center;gap:14px;padding:18px 22px;
       background: linear-gradient(180deg,var(--grass), #3f8f3f);
@@ -61,10 +60,202 @@
     .card h3{margin:0;font-size:16px;color:#333}
     .card p{margin:0;color:#555;font-size:13px}
     .card .meta{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
-    .btn{
-      background: linear-gradient(180deg,var(--accent), var(--accent-dark));
-      color:white;padding:8px 12px;border-radius:6px;border:none;cursor:pointer;font-weight:700;
-      box-shadow: 0 4px 0 rgba(0,0,0,0.18);text-transform:uppercase;font-size:12px;
+
+    /* Minecraft-style blocky buttons */
+    .btn {
+      background: linear-gradient(180deg, #4caf50, #357a38);
+      border: 3px solid #2e6b2e;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 14px;
+      box-shadow: 0 4px 0 #2e6b2e;
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+      user-select: none;
     }
-    .btn.secondary{background:#ddd;color:#222;box-shadow:none;text-transform:none;font-weight:600;padding:6px 10px}
-    footer{max-width:1100px;margin:28px auto;color:#123;opacity:0.9;padding
+    .btn:hover {
+      background: linear-gradient(180deg, #57d757, #3ea43e);
+      box-shadow: 0 6px 0 #2e6b2e;
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      box-shadow: 0 2px 0 #2e6b2e;
+      transform: translateY(1px);
+    }
+    .btn.secondary {
+      background: #ddd;
+      border: 3px solid #aaa;
+      color: #333;
+      box-shadow: none;
+      text-transform: none;
+      font-weight: 600;
+      padding: 8px 14px;
+    }
+    .btn.secondary:hover {
+      background: #eee;
+      border-color: #888;
+    }
+
+    footer{max-width:1100px;margin:28px auto;color:#123;opacity:0.9;padding:0 18px;font-size:13px}
+
+    /* overlay viewer */
+    .viewer{
+      position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999;padding:18px;
+    }
+    .viewer.open{display:flex}
+    .viewer .panel{
+      background:#fff;border-radius:8px;overflow:hidden;max-width:1200px;width:100%;height:80vh;box-shadow:0 18px 40px rgba(0,0,0,0.5);display:flex;flex-direction:column;
+    }
+    .viewer .panel .topbar{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:#fafafa;border-bottom:1px solid #eee}
+    .viewer .panel iframe{flex:1;border:0;width:100%}
+    .close-btn{
+      background:#ff5f5f;color:white;border:none;padding:6px 10px;border-radius:6px;font-weight:700;cursor:pointer;
+      box-shadow: 0 4px 0 #c94c4c;
+      transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.1s ease;
+      user-select: none;
+    }
+    .close-btn:hover {
+      background:#ff7f7f;
+      box-shadow: 0 6px 0 #c94c4c;
+      transform: translateY(-2px);
+    }
+    .close-btn:active {
+      box-shadow: 0 2px 0 #c94c4c;
+      transform: translateY(1px);
+    }
+
+    /* responsive */
+    @media (max-width:560px){
+      header{padding:12px}
+      .logo .block{width:40px;height:40px;font-size:18px}
+      .intro{flex-direction:column;align-items:flex-start;gap:8px}
+      .viewer .panel{height:92vh}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <div class="block">B</div>
+      <div>
+        <div style="font-size:14px;opacity:0.9">BUB Hub</div>
+        <div style="font-size:11px;opacity:0.8">Play local Minecraft-style games</div>
+      </div>
+    </div>
+    <div style="margin-left:auto;color:#fff;font-weight:700">Local Build</div>
+  </header>
+
+  <main>
+    <div class="intro">
+      <div>
+        <div class="title">Play Games</div>
+        <p>Add your game folders under games/ and click Play. Example folder: games/rooftop-snipers/index.html</p>
+      </div>
+      <div style="text-align:right">
+        <button class="btn secondary" onclick="document.getElementById('help').scrollIntoView({behavior:'smooth'})">How to add games</button>
+      </div>
+    </div>
+
+    <div class="game-grid" id="gameGrid">
+      <div class="card" data-path="games/rooftop-snipers/index.html">
+        <div class="thumb">Rooftop Snipers</div>
+        <h3>Rooftop Snipers (example)</h3>
+        <p>Arcade shooter on blocky rooftops. Local copy should go at games/rooftop-snipers/index.html</p>
+        <div class="meta">
+          <button class="btn" onclick="openGame(this)">Play</button>
+          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
+        </div>
+      </div>
+
+      <div class="card" data-path="games/minecraft-clone/index.html">
+        <div class="thumb">Minecraft Clone</div>
+        <h3>Block Builder (example)</h3>
+        <p>Creative building experience—drop the game's files into games/minecraft-clone/</p>
+        <div class="meta">
+          <button class="btn" onclick="openGame(this)">Play</button>
+          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
+        </div>
+      </div>
+    </div>
+
+    <section id="help" style="margin-top:22px;background:#fff;border:6px solid #e6e6e6;padding:12px;border-radius:6px">
+      <h4 style="margin:0 0 6px 0">How to add a game</h4>
+      <ol style="margin:0 0 8px 18px;color:#333">
+        <li>Create a folder under games/, for example games/rooftop-snipers/</li>
+        <li>Put your game's index.html and assets in that folder (thumb image, scripts, etc.)</li>
+        <li>Make sure the game's entrypoint is games/your-game-folder/index.html</li>
+        <li>If running locally, run a local server to avoid iframe file restrictions (example: run <code>python -m http.server</code> from your project root)</li>
+      </ol>
+      <div style="color:#444;font-size:13px">Want me to generate the card list automatically by scanning your repository? Tell me where your game folders are and I can provide a script.</div>
+    </section>
+  </main>
+
+  <footer>
+    Note: This is a local hub. To add more games, copy cards above or ask me to provide a small script that auto-discovers game folders.
+  </footer>
+
+  <div class="viewer" id="viewer" aria-hidden="true">
+    <div class="panel" role="dialog" aria-modal="true">
+      <div class="topbar">
+        <div id="gameTitle" style="font-weight:700;color:#222">Playing</div>
+        <div>
+          <button class="close-btn" onclick="closeViewer()">Close</button>
+        </div>
+      </div>
+      <iframe id="gameFrame" title="Game viewer"></iframe>
+    </div>
+  </div>
+
+  <script>
+    function findCard(el){
+      while(el && !el.classList?.contains('card')) el = el.parentElement;
+      return el;
+    }
+
+    function openGame(button){
+      var card = findCard(button);
+      if(!card) return;
+      var path = card.getAttribute('data-path') || '';
+      if(!path){
+        alert('No path defined for this game. Edit the card HTML and set data-path to the game index (e.g., games/rooftop-snipers/index.html).');
+        return;
+      }
+      var title = card.querySelector('h3')?.innerText || 'Game';
+      var viewer = document.getElementById('viewer');
+      var frame = document.getElementById('gameFrame');
+      document.getElementById('gameTitle').innerText = title;
+      frame.src = path;
+      viewer.classList.add('open');
+      viewer.setAttribute('aria-hidden','false');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeViewer(){
+      var viewer = document.getElementById('viewer');
+      var frame = document.getElementById('gameFrame');
+      frame.src = 'about:blank';
+      viewer.classList.remove('open');
+      viewer.setAttribute('aria-hidden','true');
+      document.body.style.overflow = '';
+    }
+
+    function showDetails(ev, btn){
+      ev.stopPropagation();
+      var card = findCard(btn);
+      if(!card) return;
+      var path = card.getAttribute('data-path') || '(no path set)';
+      alert('Path: ' + path + '\n\nTo change this card, edit the card element and set data-path to your game\'s index file.');
+    }
+
+    window.addEventListener('keydown', function(e){
+      if(e.key === 'Escape'){
+        var v = document.getElementById('viewer');
+        if(v.classList.contains('open')) closeViewer();
+      }
+    });
+  </script>
+</body>
+</html>
