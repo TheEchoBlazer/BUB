@@ -9,18 +9,64 @@
     #chat { height:80vh; overflow-y:auto; padding:20px; background:#1a1a1a; border-radius:10px; }
     input { width:100%; padding:15px; background:#222; border:none; color:white; font-size:18px; }
     button { padding:15px 30px; background:#ff0000; color:black; border:none; font-weight:bold; }
+
+    /* PASSWORD LOCK */
+    #lockScreen{
+      position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;
+      flex-direction:column;color:white;
+    }
+    .lock-box{
+      background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;
+      box-shadow:0 12px 0 #111;
+    }
+    input#passInput{
+      padding:16px;width:300px;font-size:20px;text-align:center;background:#222;color:white;
+      border:5px solid #4ca64c;border-radius:4px;
+    }
   </style>
 </head>
 <body>
+
+  <div id="lockScreen">
+    <div class="lock-box">
+      <h2>🔒 ECHO AI LOCKED</h2>
+      <input type="password" id="passInput" placeholder="Enter password">
+      <br><br>
+      <button onclick="checkPassword()" style="padding:14px 40px;background:#4caf50;color:white;border:4px solid #2e6b2e;font-weight:700;">UNLOCK AI</button>
+    </div>
+  </div>
+
   <h1>🔴 Echo AI - Your Personal AI</h1>
   <div id="chat"></div>
   <input type="text" id="input" placeholder="Ask me anything..." autocomplete="off">
   <button onclick="sendMessage()">Send</button>
 
   <script>
+    const DEFAULT_PASS = "bub123";
+
+    function checkPassword(){
+      const input = document.getElementById('passInput').value.trim();
+      if(input === DEFAULT_PASS || input === localStorage.getItem('bubhub_pass')){
+        localStorage.setItem('bubhub_pass', input);
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        alert("❌ Wrong password!");
+      }
+    }
+
+    window.addEventListener('load', () => {
+      if(localStorage.getItem('bubhub_pass')){
+        document.getElementById('lockScreen').style.display = 'none';
+      }
+    });
+
+    document.getElementById('passInput').addEventListener('keypress', e => {
+      if(e.key === "Enter") checkPassword();
+    });
+
+    // Original AI script
     const chat = document.getElementById('chat');
     const input = document.getElementById('input');
-
     function addMessage(text, isUser) {
       const div = document.createElement('div');
       div.style.margin = "10px 0";
@@ -31,28 +77,19 @@
       chat.appendChild(div);
       chat.scrollTop = chat.scrollHeight;
     }
-
     function sendMessage() {
       const msg = input.value.trim();
       if (!msg) return;
-      
       addMessage(msg, true);
       input.value = "";
-
-      // Simple but smart local AI logic
       setTimeout(() => {
         let reply = "Interesting. Tell me more.";
-        
         if (msg.toLowerCase().includes("hello") || msg.toLowerCase().includes("hi")) reply = "Hello sir. How can I assist you today?";
-        else if (msg.toLowerCase().includes("how are you")) reply = "Running at optimal performance. Ready to cause chaos.";
-        else if (msg.toLowerCase().includes("who are you")) reply = "I am Echo, your personal AI. Built to help you bypass shit and code.";
-        else if (msg.toLowerCase().includes("bypass") || msg.toLowerCase().includes("unblock")) reply = "I'm good at finding ways around restrictions. What do you need bypassed?";
-        
+        else if (msg.toLowerCase().includes("how are you")) reply = "Running at optimal performance.";
+        else if (msg.toLowerCase().includes("who are you")) reply = "I am Echo, your personal AI.";
         addMessage(reply, false);
       }, 600);
     }
-
-    // Press Enter to send
     input.addEventListener("keypress", e => { if (e.key === "Enter") sendMessage(); });
   </script>
 </body>
