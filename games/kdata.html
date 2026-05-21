@@ -1,6 +1,64 @@
-<iframe src="https://kdata1.com" 
-        width="100%" 
-        height="1000px" 
-        style="border:none;" 
-        allowfullscreen>
-</iframe>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>BUB HUB - kdata</title>
+  <style>
+    body,html{margin:0;height:100%;overflow:hidden;background:#000;}
+    #lockScreen{
+      position:fixed;inset:0;background:rgba(0,0,0,0.9);display:flex;align-items:center;justify-content:center;z-index:9999;
+      flex-direction:column;color:white;
+    }
+    .lock-box{
+      background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;
+      box-shadow:0 12px 0 #111;
+    }
+    input{
+      padding:16px;width:300px;font-size:20px;text-align:center;background:#222;color:white;
+      border:5px solid #4ca64c;border-radius:4px;
+    }
+    button{
+      margin-top:15px;padding:14px 40px;background:#4caf50;color:white;border:4px solid #2e6b2e;
+      font-weight:700;font-size:17px;cursor:pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="lockScreen">
+    <div class="lock-box">
+      <h2>🔒 kdata LOCKED</h2>
+      <input type="password" id="passInput" placeholder="Enter password">
+      <br><br>
+      <button onclick="checkPassword()">UNLOCK</button>
+    </div>
+  </div>
+
+  <iframe src="https://kdata1.com" width="100%" height="100%" style="border:none;" allowfullscreen></iframe>
+
+  <script>
+    const DEFAULT_PASS = "bub123";
+
+    function checkPassword(){
+      const input = document.getElementById('passInput').value.trim();
+      if(input === DEFAULT_PASS || input === localStorage.getItem('bubhub_pass')){
+        localStorage.setItem('bubhub_pass', input);
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        alert("❌ Wrong password!");
+      }
+    }
+
+    window.addEventListener('load', () => {
+      if(localStorage.getItem('bubhub_pass')){
+        document.getElementById('lockScreen').style.display = 'none';
+      }
+    });
+
+    document.getElementById('passInput').addEventListener('keypress', e => {
+      if(e.key === "Enter") checkPassword();
+    });
+  </script>
+</body>
+</html>
