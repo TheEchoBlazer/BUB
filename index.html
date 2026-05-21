@@ -6,13 +6,8 @@
   <title>Minecraft-style Game Hub</title>
   <style>
     :root{
-      --bg-color: #86c6ff;
-      --dirt: #7a4f2a;
       --grass: #4ca64c;
-      --card: #f0f0f0;
-      --accent: #3b7a3b;
-      --shadow: rgba(0,0,0,0.25);
-      --accent-dark: #2f5f2f;
+      --dirt: #7a4f2a;
     }
     html,body{height:100%;margin:0;font-family:system-ui,sans-serif;background:linear-gradient(#86c6ff 0%,#cfefff 100%);color:#111;}
     header{
@@ -20,44 +15,35 @@
       background:linear-gradient(180deg,var(--grass),#3f8f3f);
       box-shadow:0 6px 0 var(--dirt);color:white;
     }
-    .logo{
-      display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;
-    }
-    .logo .block{
-      width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);
-      border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;
-    }
-
-    .section-title{font-size:26px;font-weight:700;color:var(--accent-dark);margin:35px 0 15px;}
-    .game-grid, .proxy-grid, .premium-grid{
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;
-    }
-    .card{
-      background:linear-gradient(180deg,var(--card), #e6e6e6);
-      border:6px solid #cfcfcf;border-bottom:12px solid #cfcfcf;border-radius:6px;
-      padding:10px;box-shadow:0 6px 0 var(--shadow);
-      transition:0.2s;
-    }
-    .card:hover{transform:translateY(-6px);box-shadow:0 14px 26px rgba(0,0,0,0.2);}
-    .thumb{height:120px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(#ddd,#bbb);}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;}
+    .logo .block{width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
 
     .btn {
       background: linear-gradient(180deg, #4caf50, #357a38);
       border: 3px solid #2e6b2e;
       color: white;
-      padding: 10px 16px;
+      padding: 10px 20px;
       border-radius: 4px;
       cursor: pointer;
       font-weight: 700;
-      text-transform: uppercase;
-      font-size: 14px;
-      box-shadow: 0 4px 0 #2e6b2e;
-      width:100%;
+      margin-left:10px;
     }
-    .btn:hover {
-      background: linear-gradient(180deg, #57d757, #3ea43e);
-      transform: translateY(-2px);
+    .btn:hover {transform: translateY(-2px);}
+
+    /* Panels */
+    .overlay{
+      position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:10000;
     }
+    .panel{
+      background:#1a1a1a;border:8px solid #4ca64c;padding:25px;width:90%;max-width:1100px;max-height:92vh;overflow:auto;border-radius:8px;color:white;
+    }
+    .grid{
+      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:15px;
+    }
+    .card{
+      background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;
+    }
+    .thumb{font-size:40px;margin-bottom:10px;}
   </style>
 </head>
 <body>
@@ -81,70 +67,63 @@
       <div class="block">B</div>
       <div>BUB Hub</div>
     </div>
+    <div style="margin-left:auto;display:flex;gap:10px;">
+      <button class="btn" onclick="showProxies()">🛡️ Proxies</button>
+      <button class="btn" onclick="showPremium()">💎 Premium Hubs</button>
+    </div>
   </header>
 
-  <main style="max-width:1200px;margin:30px auto;padding:0 20px;">
-    
-    <h2 class="section-title">🎮 Your Local Games</h2>
-    <div class="game-grid">
-      <div class="card" data-path="games/kdata.html">
-        <div class="thumb">kdata</div>
-        <h3>Kdata Game Hub</h3>
-        <button class="btn" onclick="openGame(this)">Play</button>
+  <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
+    <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
+      <div class="card" data-path="games/kdata.html" style="cursor:pointer;" onclick="openGame(this)">
+        <div class="thumb">kdata</div><h3>Kdata Game Hub</h3>
       </div>
-      <div class="card" data-path="games/thegub.html">
-        <div class="thumb">thegub</div>
-        <h3>thegub</h3>
-        <button class="btn" onclick="openGame(this)">Play</button>
+      <div class="card" data-path="games/thegub.html" style="cursor:pointer;" onclick="openGame(this)">
+        <div class="thumb">thegub</div><h3>thegub</h3>
       </div>
-      <div class="card" data-path="games/thehub.html">
-        <div class="thumb">thehub</div>
-        <h3>thehub</h3>
-        <button class="btn" onclick="openGame(this)">Play</button>
+      <div class="card" data-path="games/thehub.html" style="cursor:pointer;" onclick="openGame(this)">
+        <div class="thumb">thehub</div><h3>thehub</h3>
       </div>
-      <div class="card" data-path="games/myai.html">
-        <div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div>
-        <h3>MyAI - Echo</h3>
-        <button class="btn" onclick="openGame(this)">Play</button>
+      <div class="card" data-path="games/myai.html" style="cursor:pointer;" onclick="openGame(this)">
+        <div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3>
       </div>
     </div>
-
-    <h2 class="section-title">🛡️ Proxies & Unblockers</h2>
-    <div class="proxy-grid">
-      <div class="card"><div class="thumb">🔓</div><h3>CroxyProxy</h3><button class="btn" onclick="window.open('https://www.croxyproxy.com/','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">🌐</div><h3>ProxFree</h3><button class="btn" onclick="window.open('https://www.proxfree.com/','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">🚀</div><h3>Space Unblocker</h3><button class="btn" onclick="window.open('https://space.unblocked.lol/','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">🌌</div><h3>Daydream X</h3><button class="btn" onclick="window.open('https://daydreamx.net/','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">🐺</div><h3>WolfUnblock</h3><button class="btn" onclick="window.open('https://sites.google.com/view/wolfunblock/home','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">😼</div><h3>SmurfCat</h3><button class="btn" onclick="window.open('https://smurfcat.isreally.pro/','_blank')">Open</button></div>
-      <div class="card"><div class="thumb">🎮</div><h3>9Lives Proxy</h3><button class="btn" onclick="window.open('https://9lives67.isreally.pro/','_blank')">Open</button></div>
-    </div>
-
-    <h2 class="section-title">💎 Premium Game Hubs</h2>
-    <div class="premium-grid">
-      <div class="card"><div class="thumb" style="background:#111;color:gold;">⭐</div><h3>Unblocked 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
-      <div class="card"><div class="thumb" style="background:#111;color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
-      <div class="card"><div class="thumb" style="background:#111;color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
-      <div class="card"><div class="thumb" style="background:#111;color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
-    </div>
-
   </main>
+
+  <!-- PROXIES PANEL -->
+  <div id="proxiesPanel" class="overlay">
+    <div class="panel">
+      <h2>🛡️ Proxies & Unblockers</h2>
+      <button onclick="hideProxies()" style="float:right;background:#ff5f5f;color:white;padding:8px 16px;border:none;cursor:pointer;">Close</button>
+      <div class="grid">
+        <div class="card"><div class="thumb">🔓</div><h3>CroxyProxy</h3><button class="btn" onclick="window.open('https://www.croxyproxy.com/','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">🌐</div><h3>ProxFree</h3><button class="btn" onclick="window.open('https://www.proxfree.com/','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">🚀</div><h3>Space Unblocker</h3><button class="btn" onclick="window.open('https://space.unblocked.lol/','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">🌌</div><h3>Daydream X</h3><button class="btn" onclick="window.open('https://daydreamx.net/','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">🐺</div><h3>WolfUnblock</h3><button class="btn" onclick="window.open('https://sites.google.com/view/wolfunblock/home','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">😼</div><h3>SmurfCat</h3><button class="btn" onclick="window.open('https://smurfcat.isreally.pro/','_blank')">Open</button></div>
+        <div class="card"><div class="thumb">🎮</div><h3>9Lives Proxy</h3><button class="btn" onclick="window.open('https://9lives67.isreally.pro/','_blank')">Open</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREMIUM PANEL -->
+  <div id="premiumPanel" class="overlay">
+    <div class="panel">
+      <h2>💎 Premium Game Hubs</h2>
+      <button onclick="hidePremium()" style="float:right;background:#ff5f5f;color:white;padding:8px 16px;border:none;cursor:pointer;">Close</button>
+      <div class="grid">
+        <div class="card"><div class="thumb" style="color:gold;">⭐</div><h3>Unblocked Games 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
+        <div class="card"><div class="thumb" style="color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
+        <div class="card"><div class="thumb" style="color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
+        <div class="card"><div class="thumb" style="color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
+      </div>
+    </div>
+  </div>
 
   <script>
     const DEFAULT_PASS = "GuessThePassword";
-
-    // Auto visitor logging
-    async function autoLogVisitor() {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await res.json();
-        await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
-          method: 'POST',
-          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, page: "Main Hub"}),
-          mode: 'no-cors'
-        });
-      } catch(e){}
-    }
 
     function checkPassword(){
       const input = document.getElementById('passInput').value.trim();
@@ -164,10 +143,25 @@
       btn.textContent = input.type === "password" ? "👁" : "🙈";
     }
 
-    function openGame(btn){
-      const card = btn.closest('.card');
-      const path = card.getAttribute('data-path');
+    function openGame(el){
+      const path = el.getAttribute('data-path');
       if(path) window.open(path, '_blank');
+    }
+
+    function showProxies(){ document.getElementById('proxiesPanel').style.display = 'flex'; }
+    function hideProxies(){ document.getElementById('proxiesPanel').style.display = 'none'; }
+    function showPremium(){ document.getElementById('premiumPanel').style.display = 'flex'; }
+    function hidePremium(){ document.getElementById('premiumPanel').style.display = 'none'; }
+
+    // Auto logging
+    async function autoLogVisitor() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await res.json();
+        await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
+          method: 'POST', body: JSON.stringify({time: new Date().toLocaleString(), ip: ip}), mode: 'no-cors'
+        });
+      } catch(e){}
     }
 
     window.addEventListener('load', () => {
