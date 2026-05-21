@@ -41,10 +41,6 @@
       <div class="block">B</div>
       <div>BUB Hub</div>
     </div>
-    <div style="margin-left:auto;display:flex;gap:10px;">
-      <button class="btn" onclick="showProxies()">🛡️ Proxies</button>
-      <button class="btn" onclick="showPremium()">💎 Premium Hubs</button>
-    </div>
   </header>
 
   <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
@@ -56,6 +52,21 @@
       <div class="card" data-path="games/myai.html" onclick="openGame(this)"><div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3></div>
     </div>
   </main>
+
+  <!-- ADMIN PANEL (Contains Proxies + Premium) -->
+  <div id="adminPanel" class="overlay">
+    <div class="panel">
+      <h2>🔧 ADMIN PANEL</h2>
+      <button onclick="hideAdmin()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
+      
+      <p style="margin:15px 0;"><strong>Live Visitor Logs:</strong> 
+        <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">Open Logs</a>
+      </p>
+
+      <button class="btn" onclick="showProxies()" style="margin-right:10px;">🛡️ Open Proxies</button>
+      <button class="btn" onclick="showPremium()">💎 Open Premium Hubs</button>
+    </div>
+  </div>
 
   <!-- PROXIES PANEL -->
   <div id="proxiesPanel" class="overlay">
@@ -81,17 +92,8 @@
         <div class="card"><div class="thumb" style="color:gold;">⭐</div><h3>Unblocked 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
         <div class="card"><div class="thumb" style="color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
         <div class="card"><div class="thumb" style="color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
+        <div class="card"><div class="thumb" style="color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
       </div>
-    </div>
-  </div>
-
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel" class="overlay">
-    <div class="panel">
-      <h2>🔧 ADMIN PANEL - Visitor Logs</h2>
-      <button onclick="hideAdmin()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
-      <p><strong>Live Logs:</strong> <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">Open Webhook Logs</a></p>
-      <p style="color:#aaa;">Every visitor is being automatically logged.</p>
     </div>
   </div>
 
@@ -123,7 +125,7 @@
       if(path) window.open(path, '_blank');
     }
 
-    // Secret Admin (click logo 5 times)
+    // Secret Admin Access
     function secretAdminClick(){
       clickCount++;
       if(clickCount >= 5){
@@ -135,7 +137,7 @@
         }
         clickCount = 0;
       }
-      setTimeout(() => { clickCount = 0; }, 2500);
+      setTimeout(() => clickCount = 0, 2500);
     }
 
     function hideAdmin(){ document.getElementById('adminPanel').style.display = 'none'; }
@@ -144,7 +146,7 @@
     function showPremium(){ document.getElementById('premiumPanel').style.display = 'flex'; }
     function hidePremium(){ document.getElementById('premiumPanel').style.display = 'none'; }
 
-    // Auto log visitor
+    // Auto logging
     async function autoLogVisitor() {
       try {
         const res = await fetch('https://api.ipify.org?format=json');
