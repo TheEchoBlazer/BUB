@@ -180,16 +180,21 @@
         </div>
       </div>
     </div>
+          <div class="card" data-path="games/thehub.html">
+        <div class="thumb">thegub</div>
+        <h3>thehub</h3>
+        <p>the hub of bub of gub</p>
+        <div class="meta">
+          <button class="btn" onclick="openGame(this)">Play</button>
+          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
+        </div>
+      </div>
+    </div>
 
     <section id="help" style="margin-top:22px;background:#fff;border:6px solid #e6e6e6;padding:12px;border-radius:6px">
       <h4 style="margin:0 0 6px 0">How to add a game</h4>
       <ol style="margin:0 0 8px 18px;color:#333">
-        <li>Create a folder under games/, for example games/rooftop-snipers/</li>
-        <li>Put your game's index.html and assets in that folder (thumb image, scripts, etc.)</li>
-        <li>Make sure the game's entrypoint is games/your-game-folder/index.html</li>
-        <li>If running locally, run a local server to avoid iframe file restrictions (example: run <code>python -m http.server</code> from your project root)</li>
       </ol>
-      <div style="color:#444;font-size:13px">Want me to generate the card list automatically by scanning your repository? Tell me where your game folders are and I can provide a script.</div>
     </section>
   </main>
 
