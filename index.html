@@ -5,45 +5,19 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Minecraft-style Game Hub</title>
   <style>
-    :root{
-      --grass: #4ca64c;
-      --dirt: #7a4f2a;
-    }
+    :root{ --grass: #4ca64c; --dirt: #7a4f2a; }
     html,body{height:100%;margin:0;font-family:system-ui,sans-serif;background:linear-gradient(#86c6ff 0%,#cfefff 100%);color:#111;}
-    header{
-      display:flex;align-items:center;gap:14px;padding:18px 22px;
-      background:linear-gradient(180deg,var(--grass),#3f8f3f);
-      box-shadow:0 6px 0 var(--dirt);color:white;
-    }
-    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;}
+    header{display:flex;align-items:center;gap:14px;padding:18px 22px;background:linear-gradient(180deg,var(--grass),#3f8f3f);box-shadow:0 6px 0 var(--dirt);color:white;}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;cursor:pointer;}
     .logo .block{width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
 
-    .btn {
-      background: linear-gradient(180deg, #4caf50, #357a38);
-      border: 3px solid #2e6b2e;
-      color: white;
-      padding: 10px 20px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 700;
-      margin-left:10px;
-    }
-    .btn:hover {transform: translateY(-2px);}
+    .btn{background:linear-gradient(180deg,#4caf50,#357a38);border:3px solid #2e6b2e;color:white;padding:10px 20px;border-radius:4px;cursor:pointer;font-weight:700;}
+    .btn:hover{transform:translateY(-2px);}
 
-    /* Panels */
-    .overlay{
-      position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:10000;
-    }
-    .panel{
-      background:#1a1a1a;border:8px solid #4ca64c;padding:25px;width:90%;max-width:1100px;max-height:92vh;overflow:auto;border-radius:8px;color:white;
-    }
-    .grid{
-      display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:15px;
-    }
-    .card{
-      background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;
-    }
-    .thumb{font-size:40px;margin-bottom:10px;}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:20000;}
+    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:25px;width:90%;max-width:1100px;max-height:92vh;overflow:auto;color:white;border-radius:8px;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:15px;}
+    .card{background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;}
   </style>
 </head>
 <body>
@@ -63,7 +37,7 @@
   </div>
 
   <header>
-    <div class="logo">
+    <div class="logo" onclick="secretAdminClick()">
       <div class="block">B</div>
       <div>BUB Hub</div>
     </div>
@@ -76,18 +50,10 @@
   <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
     <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
-      <div class="card" data-path="games/kdata.html" style="cursor:pointer;" onclick="openGame(this)">
-        <div class="thumb">kdata</div><h3>Kdata Game Hub</h3>
-      </div>
-      <div class="card" data-path="games/thegub.html" style="cursor:pointer;" onclick="openGame(this)">
-        <div class="thumb">thegub</div><h3>thegub</h3>
-      </div>
-      <div class="card" data-path="games/thehub.html" style="cursor:pointer;" onclick="openGame(this)">
-        <div class="thumb">thehub</div><h3>thehub</h3>
-      </div>
-      <div class="card" data-path="games/myai.html" style="cursor:pointer;" onclick="openGame(this)">
-        <div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3>
-      </div>
+      <div class="card" data-path="games/kdata.html" onclick="openGame(this)"><div class="thumb">kdata</div><h3>Kdata Game Hub</h3></div>
+      <div class="card" data-path="games/thegub.html" onclick="openGame(this)"><div class="thumb">thegub</div><h3>thegub</h3></div>
+      <div class="card" data-path="games/thehub.html" onclick="openGame(this)"><div class="thumb">thehub</div><h3>thehub</h3></div>
+      <div class="card" data-path="games/myai.html" onclick="openGame(this)"><div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3></div>
     </div>
   </main>
 
@@ -95,15 +61,13 @@
   <div id="proxiesPanel" class="overlay">
     <div class="panel">
       <h2>🛡️ Proxies & Unblockers</h2>
-      <button onclick="hideProxies()" style="float:right;background:#ff5f5f;color:white;padding:8px 16px;border:none;cursor:pointer;">Close</button>
+      <button onclick="hideProxies()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
       <div class="grid">
         <div class="card"><div class="thumb">🔓</div><h3>CroxyProxy</h3><button class="btn" onclick="window.open('https://www.croxyproxy.com/','_blank')">Open</button></div>
         <div class="card"><div class="thumb">🌐</div><h3>ProxFree</h3><button class="btn" onclick="window.open('https://www.proxfree.com/','_blank')">Open</button></div>
         <div class="card"><div class="thumb">🚀</div><h3>Space Unblocker</h3><button class="btn" onclick="window.open('https://space.unblocked.lol/','_blank')">Open</button></div>
         <div class="card"><div class="thumb">🌌</div><h3>Daydream X</h3><button class="btn" onclick="window.open('https://daydreamx.net/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">🐺</div><h3>WolfUnblock</h3><button class="btn" onclick="window.open('https://sites.google.com/view/wolfunblock/home','_blank')">Open</button></div>
         <div class="card"><div class="thumb">😼</div><h3>SmurfCat</h3><button class="btn" onclick="window.open('https://smurfcat.isreally.pro/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">🎮</div><h3>9Lives Proxy</h3><button class="btn" onclick="window.open('https://9lives67.isreally.pro/','_blank')">Open</button></div>
       </div>
     </div>
   </div>
@@ -112,18 +76,29 @@
   <div id="premiumPanel" class="overlay">
     <div class="panel">
       <h2>💎 Premium Game Hubs</h2>
-      <button onclick="hidePremium()" style="float:right;background:#ff5f5f;color:white;padding:8px 16px;border:none;cursor:pointer;">Close</button>
+      <button onclick="hidePremium()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
       <div class="grid">
-        <div class="card"><div class="thumb" style="color:gold;">⭐</div><h3>Unblocked Games 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
+        <div class="card"><div class="thumb" style="color:gold;">⭐</div><h3>Unblocked 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
         <div class="card"><div class="thumb" style="color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
         <div class="card"><div class="thumb" style="color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
-        <div class="card"><div class="thumb" style="color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
       </div>
+    </div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div id="adminPanel" class="overlay">
+    <div class="panel">
+      <h2>🔧 ADMIN PANEL - Visitor Logs</h2>
+      <button onclick="hideAdmin()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
+      <p><strong>Live Logs:</strong> <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">Open Webhook Logs</a></p>
+      <p style="color:#aaa;">Every visitor is being automatically logged.</p>
     </div>
   </div>
 
   <script>
     const DEFAULT_PASS = "GuessThePassword";
+    const ADMIN_PASS = "SubcribeTo@TheEchoBlazer";
+    let clickCount = 0;
 
     function checkPassword(){
       const input = document.getElementById('passInput').value.trim();
@@ -148,18 +123,36 @@
       if(path) window.open(path, '_blank');
     }
 
+    // Secret Admin (click logo 5 times)
+    function secretAdminClick(){
+      clickCount++;
+      if(clickCount >= 5){
+        const pass = prompt("Enter Admin Password:");
+        if(pass === ADMIN_PASS){
+          document.getElementById('adminPanel').style.display = 'flex';
+        } else {
+          alert("❌ Wrong admin password!");
+        }
+        clickCount = 0;
+      }
+      setTimeout(() => { clickCount = 0; }, 2500);
+    }
+
+    function hideAdmin(){ document.getElementById('adminPanel').style.display = 'none'; }
     function showProxies(){ document.getElementById('proxiesPanel').style.display = 'flex'; }
     function hideProxies(){ document.getElementById('proxiesPanel').style.display = 'none'; }
     function showPremium(){ document.getElementById('premiumPanel').style.display = 'flex'; }
     function hidePremium(){ document.getElementById('premiumPanel').style.display = 'none'; }
 
-    // Auto logging
+    // Auto log visitor
     async function autoLogVisitor() {
       try {
         const res = await fetch('https://api.ipify.org?format=json');
         const { ip } = await res.json();
         await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
-          method: 'POST', body: JSON.stringify({time: new Date().toLocaleString(), ip: ip}), mode: 'no-cors'
+          method: 'POST',
+          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, page: "Main Hub"}),
+          mode: 'no-cors'
         });
       } catch(e){}
     }
