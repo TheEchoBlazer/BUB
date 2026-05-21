@@ -31,9 +31,7 @@
       display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;
       font-size:20px;
     }
-
     main{max-width:1100px;margin:28px auto;padding:0 18px;}
-
     .intro{
       display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;
     }
@@ -41,7 +39,6 @@
       font-size:28px;font-weight:700;color:var(--accent-dark);
     }
     .intro p{margin:6px 0 0;color:#0b3a0b;opacity:0.9}
-
     .game-grid{
       display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;
     }
@@ -60,8 +57,6 @@
     .card h3{margin:0;font-size:16px;color:#333}
     .card p{margin:0;color:#555;font-size:13px}
     .card .meta{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
-
-    /* Minecraft-style blocky buttons */
     .btn {
       background: linear-gradient(180deg, #4caf50, #357a38);
       border: 3px solid #2e6b2e;
@@ -98,10 +93,7 @@
       background: #eee;
       border-color: #888;
     }
-
     footer{max-width:1100px;margin:28px auto;color:#123;opacity:0.9;padding:0 18px;font-size:13px}
-
-    /* overlay viewer */
     .viewer{
       position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,0.6);z-index:9999;padding:18px;
     }
@@ -127,16 +119,41 @@
       transform: translateY(1px);
     }
 
-    /* responsive */
-    @media (max-width:560px){
-      header{padding:12px}
-      .logo .block{width:40px;height:40px;font-size:18px}
-      .intro{flex-direction:column;align-items:flex-start;gap:8px}
-      .viewer .panel{height:92vh}
+    /* PASSWORD LOCK */
+    #lockScreen{
+      position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:10000;
+      flex-direction:column;gap:20px;color:white;font-size:18px;
     }
+    .lock-box{
+      background:#1a1a1a;border:8px solid #4ca64c;border-bottom:16px solid #2f5f2f;
+      padding:40px 50px;border-radius:8px;text-align:center;box-shadow:0 12px 0 #111;
+      max-width:360px;width:90%;
+    }
+    .lock-box input{
+      width:100%;padding:16px;font-size:20px;margin:15px 0;background:#222;color:white;
+      border:5px solid #4ca64c;text-align:center;border-radius:4px;
+    }
+    .lock-box button{
+      background: linear-gradient(180deg, #4caf50, #357a38);color:white;padding:14px 40px;
+      border:4px solid #2e6b2e;font-weight:700;font-size:17px;cursor:pointer;
+      box-shadow:0 6px 0 #2e6b2e;
+    }
+    .lock-box button:active{transform:translateY(4px);box-shadow:0 2px 0 #2e6b2e;}
   </style>
 </head>
 <body>
+
+  <!-- PASSWORD LOCK -->
+  <div id="lockScreen">
+    <div class="lock-box">
+      <h2 style="margin:0 0 8px 0;color:#4ca64c;">🔒 BUB HUB</h2>
+      <p style="margin:0 0 20px 0;opacity:0.85;">Enter password to continue</p>
+      <input type="password" id="passInput" placeholder="Password" autocomplete="off">
+      <button onclick="checkPassword()">UNLOCK HUB</button>
+      <p id="lockMsg" style="margin-top:15px;color:#ff6666;min-height:24px;"></p>
+    </div>
+  </div>
+
   <header>
     <div class="logo">
       <div class="block">B</div>
@@ -147,29 +164,26 @@
     </div>
     <div style="margin-left:auto;color:#fff;font-weight:700">Local Build</div>
   </header>
-
   <main>
     <div class="intro">
       <div>
         <div class="title">Play Games</div>
-        <p>Add your game folders under games/ and click Play. Example folder: games/rooftop-snipers/index.html</p>
+        <p>Add your game folders under games/ and click Play.</p>
       </div>
       <div style="text-align:right">
         <button class="btn secondary" onclick="document.getElementById('help').scrollIntoView({behavior:'smooth'})">How to add games</button>
       </div>
     </div>
-
     <div class="game-grid" id="gameGrid">
       <div class="card" data-path="games/kdata.html">
         <div class="thumb">kdata</div>
-        <h3>Kdata Game Hub)</h3>
+        <h3>Kdata Game Hub</h3>
         <p>game hub</p>
         <div class="meta">
           <button class="btn" onclick="openGame(this)">Play</button>
           <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
         </div>
       </div>
-
       <div class="card" data-path="games/thegub.html">
         <div class="thumb">thegub</div>
         <h3>thegub</h3>
@@ -179,10 +193,8 @@
           <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
         </div>
       </div>
-    </div>
-    
-          <div class="card" data-path="games/thehub.html">
-        <div class="thumb">thegub</div>
+      <div class="card" data-path="games/thehub.html">
+        <div class="thumb">thehub</div>
         <h3>thehub</h3>
         <p>the hub of bub of gub</p>
         <div class="meta">
@@ -191,16 +203,16 @@
         </div>
       </div>
     </div>
-
+    
     <section id="help" style="margin-top:22px;background:#fff;border:6px solid #e6e6e6;padding:12px;border-radius:6px">
       <h4 style="margin:0 0 6px 0">How to add a game</h4>
       <ol style="margin:0 0 8px 18px;color:#333">
+        <!-- Add instructions here if you want -->
       </ol>
     </section>
   </main>
-
   <footer>
-    Note: This is a local hub. To add more games, copy cards above or ask me to provide a small script that auto-discovers game folders.
+    Note: This is a local hub.
   </footer>
 
   <div class="viewer" id="viewer" aria-hidden="true">
@@ -216,46 +228,59 @@
   </div>
 
   <script>
+    const DEFAULT_PASS = "bub123";   // ← Change this to whatever password you want
+
+    function checkPassword(){
+      const input = document.getElementById('passInput').value.trim();
+      const msg = document.getElementById('lockMsg');
+
+      if(input === DEFAULT_PASS || input === localStorage.getItem('bubhub_pass')){
+        localStorage.setItem('bubhub_pass', input);
+        document.getElementById('lockScreen').style.display = 'none';
+      } else {
+        msg.textContent = "❌ Wrong password!";
+        setTimeout(() => msg.textContent = "", 1800);
+      }
+    }
+
+    window.addEventListener('load', () => {
+      if(localStorage.getItem('bubhub_pass')){
+        document.getElementById('lockScreen').style.display = 'none';
+      }
+    });
+
+    document.getElementById('passInput').addEventListener('keypress', e => {
+      if(e.key === "Enter") checkPassword();
+    });
+
+    // Your original functions
     function findCard(el){
       while(el && !el.classList?.contains('card')) el = el.parentElement;
       return el;
     }
-
     function openGame(button){
       var card = findCard(button);
       if(!card) return;
       var path = card.getAttribute('data-path') || '';
-      if(!path){
-        alert('No path defined for this game. Edit the card HTML and set data-path to the game index (e.g., games/rooftop-snipers/index.html).');
-        return;
-      }
+      if(!path){ alert('No path defined'); return; }
       var title = card.querySelector('h3')?.innerText || 'Game';
-      var viewer = document.getElementById('viewer');
-      var frame = document.getElementById('gameFrame');
       document.getElementById('gameTitle').innerText = title;
-      frame.src = path;
-      viewer.classList.add('open');
-      viewer.setAttribute('aria-hidden','false');
+      document.getElementById('gameFrame').src = path;
+      document.getElementById('viewer').classList.add('open');
       document.body.style.overflow = 'hidden';
     }
-
     function closeViewer(){
-      var viewer = document.getElementById('viewer');
-      var frame = document.getElementById('gameFrame');
-      frame.src = 'about:blank';
-      viewer.classList.remove('open');
-      viewer.setAttribute('aria-hidden','true');
+      document.getElementById('gameFrame').src = 'about:blank';
+      document.getElementById('viewer').classList.remove('open');
       document.body.style.overflow = '';
     }
-
     function showDetails(ev, btn){
       ev.stopPropagation();
       var card = findCard(btn);
       if(!card) return;
-      var path = card.getAttribute('data-path') || '(no path set)';
-      alert('Path: ' + path + '\n\nTo change this card, edit the card element and set data-path to your game\'s index file.');
+      var path = card.getAttribute('data-path') || '(no path)';
+      alert('Path: ' + path);
     }
-
     window.addEventListener('keydown', function(e){
       if(e.key === 'Escape'){
         var v = document.getElementById('viewer');
