@@ -15,8 +15,11 @@
     .btn:hover{transform:translateY(-2px);}
 
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:20000;}
-    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:25px;width:90%;max-width:1100px;max-height:92vh;overflow:auto;color:white;border-radius:8px;}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;margin-top:15px;}
+    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:20px;width:95%;max-width:1200px;height:90vh;border-radius:8px;color:white;display:flex;flex-direction:column;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    iframe{flex:1;border:0;background:#000;width:100%;}
+
+    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:10px;}
     .card{background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;}
   </style>
 </head>
@@ -46,54 +49,32 @@
   <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
     <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
     <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
-      <div class="card" data-path="games/kdata.html" onclick="openGame(this)"><div class="thumb">kdata</div><h3>Kdata Game Hub</h3></div>
-      <div class="card" data-path="games/thegub.html" onclick="openGame(this)"><div class="thumb">thegub</div><h3>thegub</h3></div>
-      <div class="card" data-path="games/thehub.html" onclick="openGame(this)"><div class="thumb">thehub</div><h3>thehub</h3></div>
-      <div class="card" data-path="games/myai.html" onclick="openGame(this)"><div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3></div>
+      <div class="card" data-path="games/kdata.html" onclick="openLocalGame(this)"><div class="thumb">kdata</div><h3>Kdata Game Hub</h3></div>
+      <div class="card" data-path="games/thegub.html" onclick="openLocalGame(this)"><div class="thumb">thegub</div><h3>thegub</h3></div>
+      <div class="card" data-path="games/thehub.html" onclick="openLocalGame(this)"><div class="thumb">thehub</div><h3>thehub</h3></div>
+      <div class="card" data-path="games/myai.html" onclick="openLocalGame(this)"><div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3></div>
     </div>
   </main>
 
-  <!-- ADMIN PANEL (Contains Proxies + Premium) -->
+  <!-- ADMIN PANEL -->
   <div id="adminPanel" class="overlay">
     <div class="panel">
-      <h2>🔧 ADMIN PANEL</h2>
-      <button onclick="hideAdmin()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
-      
-      <p style="margin:15px 0;"><strong>Live Visitor Logs:</strong> 
-        <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">Open Logs</a>
-      </p>
-
-      <button class="btn" onclick="showProxies()" style="margin-right:10px;">🛡️ Open Proxies</button>
-      <button class="btn" onclick="showPremium()">💎 Open Premium Hubs</button>
+      <div class="topbar">
+        <h2>🔧 ADMIN PANEL</h2>
+        <button onclick="hideAdmin()" style="background:#ff5f5f;padding:8px 16px;">Close</button>
+      </div>
+      <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">👉 View Live Visitor Logs</a>
     </div>
   </div>
 
-  <!-- PROXIES PANEL -->
-  <div id="proxiesPanel" class="overlay">
+  <!-- PROXIES / PREMIUM VIEWER -->
+  <div id="viewer" class="overlay">
     <div class="panel">
-      <h2>🛡️ Proxies & Unblockers</h2>
-      <button onclick="hideProxies()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
-      <div class="grid">
-        <div class="card"><div class="thumb">🔓</div><h3>CroxyProxy</h3><button class="btn" onclick="window.open('https://www.croxyproxy.com/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">🌐</div><h3>ProxFree</h3><button class="btn" onclick="window.open('https://www.proxfree.com/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">🚀</div><h3>Space Unblocker</h3><button class="btn" onclick="window.open('https://space.unblocked.lol/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">🌌</div><h3>Daydream X</h3><button class="btn" onclick="window.open('https://daydreamx.net/','_blank')">Open</button></div>
-        <div class="card"><div class="thumb">😼</div><h3>SmurfCat</h3><button class="btn" onclick="window.open('https://smurfcat.isreally.pro/','_blank')">Open</button></div>
+      <div class="topbar">
+        <h2 id="viewerTitle">Loading...</h2>
+        <button onclick="closeViewer()" style="background:#ff5f5f;padding:8px 16px;">Close</button>
       </div>
-    </div>
-  </div>
-
-  <!-- PREMIUM PANEL -->
-  <div id="premiumPanel" class="overlay">
-    <div class="panel">
-      <h2>💎 Premium Game Hubs</h2>
-      <button onclick="hidePremium()" style="float:right;background:#ff5f5f;padding:8px 16px;">Close</button>
-      <div class="grid">
-        <div class="card"><div class="thumb" style="color:gold;">⭐</div><h3>Unblocked 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
-        <div class="card"><div class="thumb" style="color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
-        <div class="card"><div class="thumb" style="color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
-        <div class="card"><div class="thumb" style="color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
-      </div>
+      <iframe id="viewerFrame"></iframe>
     </div>
   </div>
 
@@ -120,12 +101,12 @@
       btn.textContent = input.type === "password" ? "👁" : "🙈";
     }
 
-    function openGame(el){
+    function openLocalGame(el){
       const path = el.getAttribute('data-path');
       if(path) window.open(path, '_blank');
     }
 
-    // Secret Admin Access
+    // Secret Admin (click logo 5 times)
     function secretAdminClick(){
       clickCount++;
       if(clickCount >= 5){
@@ -141,10 +122,30 @@
     }
 
     function hideAdmin(){ document.getElementById('adminPanel').style.display = 'none'; }
-    function showProxies(){ document.getElementById('proxiesPanel').style.display = 'flex'; }
-    function hideProxies(){ document.getElementById('proxiesPanel').style.display = 'none'; }
-    function showPremium(){ document.getElementById('premiumPanel').style.display = 'flex'; }
-    function hidePremium(){ document.getElementById('premiumPanel').style.display = 'none'; }
+
+    // Open any link inside the viewer (same tab)
+    function openInViewer(title, url){
+      document.getElementById('viewerTitle').textContent = title;
+      document.getElementById('viewerFrame').src = url;
+      document.getElementById('viewer').style.display = 'flex';
+    }
+
+    function closeViewer(){
+      document.getElementById('viewerFrame').src = 'about:blank';
+      document.getElementById('viewer').style.display = 'none';
+    }
+
+    // Admin can open proxies/premium here
+    function showProxies(){
+      hideAdmin();
+      // Example: Open one proxy by default, or you can add buttons inside admin
+      openInViewer("CroxyProxy", "https://www.croxyproxy.com/");
+    }
+
+    function showPremium(){
+      hideAdmin();
+      openInViewer("Unblocked Games 77", "https://sites.google.com/site/unblockedgames77/");
+    }
 
     // Auto logging
     async function autoLogVisitor() {
