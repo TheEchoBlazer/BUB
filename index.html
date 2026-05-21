@@ -14,45 +14,23 @@
       --shadow: rgba(0,0,0,0.25);
       --accent-dark: #2f5f2f;
     }
-    html,body{height:100%;margin:0;font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;background: linear-gradient(#86c6ff 0%, #87d1ff 50%, #cfefff 100%); color:#111;}
-    header{
-      display:flex;align-items:center;gap:14px;padding:18px 22px;
-      background: linear-gradient(180deg,var(--grass), #3f8f3f);
-      box-shadow: 0 6px 0 var(--dirt), 0 8px 16px rgba(0,0,0,0.15);
-      color: white;
-      position:relative;
-    }
-    .logo{
-      display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;
-      text-transform:uppercase;letter-spacing:1px;
-    }
-    .logo .block{
-      width:48px;height:48px;background: linear-gradient(180deg,#9b6d2f,#6f4924);
-      border:4px solid #caa16f; box-shadow: inset 0 -6px 0 rgba(0,0,0,0.12);
-      display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;
-      font-size:20px;
-    }
-    main{max-width:1100px;margin:28px auto;padding:0 18px;}
-    .intro{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:18px;}
-    .intro .title{font-size:28px;font-weight:700;color:var(--accent-dark);}
-    .intro p{margin:6px 0 0;color:#0b3a0b;opacity:0.9}
-    .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+    html,body{height:100%;margin:0;font-family:system-ui,sans-serif;background:linear-gradient(#86c6ff 0%,#cfefff 100%);color:#111;}
+    header{display:flex;align-items:center;gap:14px;padding:18px 22px;background:linear-gradient(180deg,var(--grass),#3f8f3f);box-shadow:0 6px 0 var(--dirt);color:white;}
+    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;}
+    .logo .block{width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
+
+    .section-title{font-size:26px;font-weight:700;color:var(--accent-dark);margin:35px 0 15px;}
+    .game-grid, .proxy-grid, .premium-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;}
+    
     .card{
       background:linear-gradient(180deg,var(--card), #e6e6e6);
       border:6px solid #cfcfcf;border-bottom-width:12px;border-radius:6px;
-      padding:8px;box-shadow: 0 6px 0 var(--shadow);
-      display:flex;flex-direction:column;gap:8px;
+      padding:8px;box-shadow:0 6px 0 var(--shadow);
       transition:transform .12s ease, box-shadow .12s ease;
     }
     .card:hover{transform:translateY(-6px);box-shadow:0 14px 26px rgba(0,0,0,0.18);}
-    .thumb{
-      height:120px;background:linear-gradient(180deg,#ddd,#bbb);border-radius:4px;overflow:hidden;
-      display:flex;align-items:center;justify-content:center;font-weight:700;color:#666;
-    }
-    .card h3{margin:0;font-size:16px;color:#333}
-    .card p{margin:0;color:#555;font-size:13px}
-    .card .meta{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:8px}
-
+    .thumb{height:120px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(#ddd,#bbb);}
+    
     .btn {
       background: linear-gradient(180deg, #4caf50, #357a38);
       border: 3px solid #2e6b2e;
@@ -65,294 +43,139 @@
       font-size: 14px;
       box-shadow: 0 4px 0 #2e6b2e;
       transition: all 0.2s ease;
+      width: 100%;
     }
-    .btn:hover {background: linear-gradient(180deg, #57d757, #3ea43e);transform: translateY(-2px);}
-
-    /* PASSWORD LOCK */
-    #lockScreen{
-      position:fixed;inset:0;background:rgba(0,0,0,0.88);display:flex;align-items:center;justify-content:center;z-index:10000;
-      flex-direction:column;gap:20px;color:white;font-size:18px;
+    .btn:hover {
+      background: linear-gradient(180deg, #57d757, #3ea43e);
+      transform: translateY(-2px);
     }
-    .lock-box{
-      background:#1a1a1a;border:8px solid #4ca64c;border-bottom:16px solid #2f5f2f;
-      padding:40px 50px;border-radius:8px;text-align:center;box-shadow:0 12px 0 #111;
-      max-width:360px;width:90%;
+    .btn:active {
+      box-shadow: 0 2px 0 #2e6b2e;
+      transform: translateY(1px);
     }
-    .password-container{position:relative;width:100%;}
-    .lock-box input{
-      width:100%;padding:16px 50px 16px 16px;font-size:20px;margin:15px 0;background:#222;color:white;
-      border:5px solid #4ca64c;text-align:center;border-radius:4px;
-    }
-    .toggle-pass{
-      position:absolute;right:15px;top:50%;transform:translateY(-50%);
-      background:none;border:none;color:#4ca64c;font-size:22px;cursor:pointer;
-    }
-    .lock-box button{
-      background: linear-gradient(180deg, #4caf50, #357a38);color:white;padding:14px 40px;
-      border:4px solid #2e6b2e;font-weight:700;font-size:17px;cursor:pointer;
-      box-shadow:0 6px 0 #2e6b2e;
-    }
-
-    /* ADMIN PANEL */
-    #adminPanel{
-      position:fixed;inset:0;background:rgba(0,0,0,0.9);display:none;align-items:center;justify-content:center;z-index:20000;
-    }
-    .admin-box{
-      background:#1a1a1a;border:8px solid #4ca64c;padding:30px;border-radius:8px;width:90%;max-width:900px;max-height:90vh;overflow:auto;
-      color:white;
-    }
-    table{width:100%;border-collapse:collapse;margin-top:15px;}
-    th,td{border:3px solid #4ca64c;padding:10px;text-align:left;}
-    th{background:#2f5f2f;}
   </style>
 </head>
 <body>
 
   <!-- PASSWORD LOCK -->
   <div id="lockScreen">
-    <div class="lock-box">
-      <h2 style="margin:0 0 8px 0;color:#4ca64c;">🔒 BUB HUB</h2>
-      <p style="margin:0 0 20px 0;opacity:0.85;">Enter password to continue</p>
-      
-      <div class="password-container">
-        <input type="password" id="passInput" placeholder="Password" autocomplete="off">
-        <button class="toggle-pass" onclick="togglePassword()">👁</button>
+    <div class="lock-box" style="background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;max-width:360px;width:90%;">
+      <h2 style="color:#4ca64c;">🔒 BUB HUB</h2>
+      <p>Enter password to continue</p>
+      <div class="password-container" style="position:relative;width:100%;">
+        <input type="password" id="passInput" placeholder="Password" style="width:100%;padding:16px 50px 16px 16px;font-size:20px;background:#222;color:white;border:5px solid #4ca64c;">
+        <button class="toggle-pass" onclick="togglePassword()" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);background:none;border:none;color:#4ca64c;font-size:24px;">👁</button>
       </div>
-      
-      <button onclick="checkPassword()">UNLOCK HUB</button>
-      <p id="lockMsg" style="margin-top:15px;color:#ff6666;min-height:24px;"></p>
+      <button onclick="checkPassword()" class="btn">UNLOCK HUB</button>
+      <p id="lockMsg" style="color:#ff6666;margin-top:10px;"></p>
     </div>
   </div>
 
   <header>
     <div class="logo">
       <div class="block">B</div>
-      <div>
-        <div style="font-size:14px;opacity:0.9">BUB Hub</div>
-        <div style="font-size:11px;opacity:0.8">Play local Minecraft-style games</div>
-      </div>
+      <div>BUB Hub</div>
     </div>
-    <div style="margin-left:auto;color:#fff;font-weight:700;cursor:pointer;" onclick="openAdmin()">ADMIN</div>
+    <div style="margin-left:auto;cursor:pointer;font-weight:700;" onclick="openAdmin()">ADMIN</div>
   </header>
 
-  <main>
-    <div class="intro">
-      <div>
-        <div class="title">Play Games</div>
-        <p>Add your game folders under games/ and click Play.</p>
-      </div>
-      <div style="text-align:right">
-        <button class="btn secondary" onclick="document.getElementById('help').scrollIntoView({behavior:'smooth'})">How to add games</button>
-      </div>
-    </div>
-
+  <main style="max-width:1200px;margin:30px auto;padding:0 20px;">
+    
+    <h2 class="section-title">🎮 Your Local Games</h2>
     <div class="game-grid">
       <div class="card" data-path="games/kdata.html">
         <div class="thumb">kdata</div>
         <h3>Kdata Game Hub</h3>
-        <p>game hub</p>
-        <div class="meta">
-          <button class="btn" onclick="openGame(this)">Play</button>
-          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
-        </div>
+        <div class="meta" style="margin-top:8px;"><button class="btn" onclick="openGame(this)">Play</button></div>
       </div>
       <div class="card" data-path="games/thegub.html">
         <div class="thumb">thegub</div>
         <h3>thegub</h3>
-        <p>gub of bub of hub</p>
-        <div class="meta">
-          <button class="btn" onclick="openGame(this)">Play</button>
-          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
-        </div>
+        <div class="meta" style="margin-top:8px;"><button class="btn" onclick="openGame(this)">Play</button></div>
       </div>
       <div class="card" data-path="games/thehub.html">
         <div class="thumb">thehub</div>
         <h3>thehub</h3>
-        <p>the hub of bub of gub</p>
-        <div class="meta">
-          <button class="btn" onclick="openGame(this)">Play</button>
-          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
-        </div>
+        <div class="meta" style="margin-top:8px;"><button class="btn" onclick="openGame(this)">Play</button></div>
       </div>
       <div class="card" data-path="games/myai.html">
-        <div class="thumb" style="background:linear-gradient(#0f0f0f,#1a1a1a);color:#0f0;font-size:22px;">🤖</div>
+        <div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div>
         <h3>MyAI - Echo</h3>
-        <p>Your Personal Jarvis AI</p>
-        <div class="meta">
-          <button class="btn" onclick="openGame(this)">Play</button>
-          <button class="btn secondary" onclick="showDetails(event,this)">Details</button>
-        </div>
+        <div class="meta" style="margin-top:8px;"><button class="btn" onclick="openGame(this)">Play</button></div>
       </div>
     </div>
 
-    <section id="help" style="margin-top:22px;background:#fff;border:6px solid #e6e6e6;padding:12px;border-radius:6px">
-      <h4 style="margin:0 0 6px 0">How to add a game</h4>
-    </section>
+    <h2 class="section-title">🛡️ Proxies & Unblockers</h2>
+    <div class="proxy-grid">
+      <div class="card"><div class="thumb">🔓</div><h3>CroxyProxy</h3><button class="btn" onclick="window.open('https://www.croxyproxy.com/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🌐</div><h3>ProxFree</h3><button class="btn" onclick="window.open('https://www.proxfree.com/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🚀</div><h3>Space Unblocker</h3><button class="btn" onclick="window.open('https://space.unblocked.lol/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🌌</div><h3>Daydream X</h3><button class="btn" onclick="window.open('https://daydreamx.net/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🐺</div><h3>WolfUnblock</h3><button class="btn" onclick="window.open('https://sites.google.com/view/wolfunblock/home','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">😼</div><h3>SmurfCat</h3><button class="btn" onclick="window.open('https://smurfcat.isreally.pro/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🎮</div><h3>9Lives Proxy</h3><button class="btn" onclick="window.open('https://9lives67.isreally.pro/','_blank')">Open Proxy</button></div>
+      <div class="card"><div class="thumb">🛡️</div><h3>CoProxy</h3><button class="btn" onclick="window.open('https://coproxy.io/','_blank')">Open Proxy</button></div>
+    </div>
+
+    <h2 class="section-title">💎 Premium Game Hubs</h2>
+    <div class="premium-grid">
+      <div class="card"><div class="thumb" style="background:#111;color:gold;">⭐</div><h3>Unblocked 77</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedgames77/','_blank')">Play</button></div>
+      <div class="card"><div class="thumb" style="background:#111;color:gold;">🔥</div><h3>Macrolo Games</h3><button class="btn" onclick="window.open('https://games.macrolorblx.com/','_blank')">Play</button></div>
+      <div class="card"><div class="thumb" style="background:#111;color:gold;">⚡</div><h3>Unblocked WTF</h3><button class="btn" onclick="window.open('https://sites.google.com/site/unblockedwtf/','_blank')">Play</button></div>
+      <div class="card"><div class="thumb" style="background:#111;color:gold;">🚀</div><h3>Nexora Unblocked</h3><button class="btn" onclick="window.open('https://nexoraunblocked.com/','_blank')">Play</button></div>
+    </div>
+
   </main>
-
-  <footer style="max-width:1100px;margin:28px auto;color:#123;opacity:0.9;padding:0 18px;font-size:13px">
-    Note: This is a local hub.
-  </footer>
-
-  <!-- VIEWER -->
-  <div class="viewer" id="viewer" aria-hidden="true">
-    <div class="panel" role="dialog" aria-modal="true">
-      <div class="topbar">
-        <div id="gameTitle" style="font-weight:700;color:#222">Playing</div>
-        <div>
-          <button class="btn" onclick="toggleFullScreen()" style="margin-right:8px;">⛶ Fullscreen</button>
-          <button class="close-btn" onclick="closeViewer()">Close</button>
-        </div>
-      </div>
-      <iframe id="gameFrame" title="Game viewer"></iframe>
-    </div>
-  </div>
-
-  <!-- ADMIN PANEL -->
-  <div id="adminPanel">
-    <div class="admin-box">
-      <h2 style="margin:0 0 15px 0;color:#4ca64c;">🔧 ADMIN PANEL - Visitor Logs</h2>
-      <button onclick="closeAdmin()" style="float:right;background:#ff5f5f;color:white;border:none;padding:8px 16px;">Close</button>
-      
-      <div style="margin:15px 0;">
-        <input type="text" id="visitorName" placeholder="Enter your name" style="padding:8px;width:300px;">
-        <button onclick="logCurrentVisit()" class="btn">Log Current Visit</button>
-      </div>
-
-      <table id="visitorTable">
-        <thead>
-          <tr><th>Time</th><th>Name</th><th>IP Address</th><th>Location</th></tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-
-      <button onclick="clearLogs()" style="margin-top:15px;background:#ff5f5f;color:white;border:none;padding:8px 16px;">Clear All Logs</button>
-    </div>
-  </div>
 
   <script>
     const DEFAULT_PASS = "GuessThePassword";
     const ADMIN_PASS = "SubcribeTo@TheEchoBlazer";
 
-    // Password Lock
+    async function autoLogVisitor() {
+      try {
+        const res = await fetch('https://api.ipify.org?format=json');
+        const { ip } = await res.json();
+        await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
+          method: 'POST',
+          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, action: "visited_hub"}),
+          mode: 'no-cors'
+        });
+      } catch(e){}
+    }
+
     function checkPassword(){
       const input = document.getElementById('passInput').value.trim();
-      const msg = document.getElementById('lockMsg');
       if(input === DEFAULT_PASS || input === localStorage.getItem('bubhub_pass')){
         localStorage.setItem('bubhub_pass', input);
         document.getElementById('lockScreen').style.display = 'none';
       } else {
-        msg.textContent = "❌ Wrong password!";
-        setTimeout(() => msg.textContent = "", 1800);
+        document.getElementById('lockMsg').textContent = "❌ Wrong password!";
+        setTimeout(() => document.getElementById('lockMsg').textContent = "", 2000);
       }
     }
 
     function togglePassword(){
       const input = document.getElementById('passInput');
       const btn = input.parentElement.querySelector('.toggle-pass');
-      if(input.type === "password"){
-        input.type = "text";
-        btn.textContent = "🙈";
-      } else {
-        input.type = "password";
-        btn.textContent = "👁";
-      }
+      input.type = input.type === "password" ? "text" : "password";
+      btn.textContent = input.type === "password" ? "👁" : "🙈";
     }
 
-    // Admin Panel
-    async function getCurrentIP() {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const data = await res.json();
-        return data.ip;
-      } catch(e) {
-        return "127.0.0.1";
-      }
-    }
-
-    async function logCurrentVisit() {
-      const name = document.getElementById('visitorName').value.trim() || "Guest";
-      const ip = await getCurrentIP();
-      const log = { time: new Date().toLocaleString(), name: name, ip: ip, location: "Local" };
-      
-      let logs = JSON.parse(localStorage.getItem('bubhub_visitors') || '[]');
-      logs.unshift(log);
-      localStorage.setItem('bubhub_visitors', JSON.stringify(logs));
-      renderLogs();
-      alert("✅ Visit logged!");
-    }
-
-    function renderLogs() {
-      const tbody = document.querySelector('#visitorTable tbody');
-      tbody.innerHTML = '';
-      const logs = JSON.parse(localStorage.getItem('bubhub_visitors') || '[]');
-      logs.forEach(log => {
-        const row = document.createElement('tr');
-        row.innerHTML = `<td>${log.time}</td><td>${log.name}</td><td>${log.ip}</td><td>${log.location}</td>`;
-        tbody.appendChild(row);
-      });
-    }
-
-    function openAdmin() {
+    function openAdmin(){
       const pass = prompt("Enter Admin Password:");
-      if (pass === ADMIN_PASS || pass === localStorage.getItem('bubhub_adminpass')) {
-        localStorage.setItem('bubhub_adminpass', pass);
-        document.getElementById('adminPanel').style.display = 'flex';
-        renderLogs();
+      if(pass === ADMIN_PASS) {
+        window.open("https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c", "_blank");
       } else {
         alert("❌ Wrong admin password!");
       }
     }
 
-    function closeAdmin() {
-      document.getElementById('adminPanel').style.display = 'none';
-    }
-
-    function clearLogs() {
-      if(confirm("Delete all logs?")) {
-        localStorage.removeItem('bubhub_visitors');
-        renderLogs();
-      }
-    }
-
-    // Fullscreen
-    function toggleFullScreen(){
-      const frame = document.getElementById('gameFrame');
-      if(!document.fullscreenElement) frame.requestFullscreen().catch(()=>{});
-      else document.exitFullscreen();
-    }
-
-    // Original functions
-    function findCard(el){ while(el && !el.classList?.contains('card')) el = el.parentElement; return el; }
-    function openGame(button){
-      var card = findCard(button);
-      if(!card) return;
-      var path = card.getAttribute('data-path') || '';
-      if(!path) return alert('No path defined');
-      document.getElementById('gameTitle').innerText = card.querySelector('h3')?.innerText || 'Game';
-      document.getElementById('gameFrame').src = path;
-      document.getElementById('viewer').classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeViewer(){
-      document.getElementById('gameFrame').src = 'about:blank';
-      document.getElementById('viewer').classList.remove('open');
-      document.body.style.overflow = '';
-    }
-    function showDetails(ev, btn){
-      ev.stopPropagation();
-      var card = findCard(btn);
-      if(card) alert('Path: ' + (card.getAttribute('data-path') || '(no path)'));
-    }
-
-    // Load
     window.addEventListener('load', () => {
+      autoLogVisitor();
       if(localStorage.getItem('bubhub_pass')){
         document.getElementById('lockScreen').style.display = 'none';
       }
     });
-
-    document.getElementById('passInput').addEventListener('keypress', e => { if(e.key === "Enter") checkPassword(); });
   </script>
 </body>
 </html>
