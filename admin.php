@@ -5,12 +5,10 @@ if (!isset($_SESSION['is_admin'])) {
     exit;
 }
 
-define('ADMIN_PASS', 'Password.');
-
 $usersFile = 'users.json';
 $guestFile = 'guest.json';
 
-function loadUsers() { /* same as above */ 
+function loadUsers() {
     global $usersFile;
     return file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) ?: [] : [];
 }
@@ -18,7 +16,7 @@ function saveUsers($users) {
     global $usersFile;
     file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
 }
-function getGuest() { /* same */ 
+function getGuest() {
     global $guestFile;
     return file_exists($guestFile) ? json_decode(file_get_contents($guestFile), true) ?: ['enabled'=>false,'password'=>'guest123'] : ['enabled'=>false,'password'=>'guest123'];
 }
@@ -27,7 +25,7 @@ function saveGuest($data) {
     file_put_contents($guestFile, json_encode($data, JSON_PRETTY_PRINT));
 }
 
-// Handle form submissions
+// Handle actions
 if (isset($_POST['action'])) {
     if ($_POST['action'] === 'add_user') {
         $users = loadUsers();
@@ -41,7 +39,7 @@ if (isset($_POST['action'])) {
     }
     if ($_POST['action'] === 'remove_user') {
         $users = loadUsers();
-        array_splice($users, $_POST['index'], 1);
+        array_splice($users, (int)$_POST['index'], 1);
         saveUsers($users);
     }
     if ($_POST['action'] === 'update_guest') {
@@ -62,21 +60,22 @@ $guest = getGuest();
   <meta charset="utf-8">
   <title>Admin Panel - BUB Hub</title>
   <style>
-    body { font-family:system-ui; background:#111; color:white; padding:20px; }
-    input, button { padding:10px; margin:5px; }
-    .user { background:#222; padding:15px; margin:10px 0; border-radius:8px; }
+    body { font-family:system-ui; background:#0f1620; color:white; padding:20px; }
+    .user { background:#1f2528; padding:15px; margin:10px 0; border-radius:8px; border-left:5px solid #4ade80; }
+    input, button { padding:10px; margin:5px; font-size:16px; }
   </style>
 </head>
 <body>
   <h1>🔧 ADMIN PANEL</h1>
-  <a href="index.php">← Back to Hub</a>
+  <p><strong>Emergency Password:</strong> <code>Emergency123!</code></p>
+  <a href="index.php">← Back to Hub</a> | <a href="index.php?logout=1">Logout</a>
 
   <h2>Guest Password</h2>
   <form method="post">
     <input type="hidden" name="action" value="update_guest">
     <label><input type="checkbox" name="guest_enabled" <?= $guest['enabled'] ? 'checked' : '' ?>> Enable Guest Mode</label><br><br>
     <input type="text" name="guest_password" value="<?= htmlspecialchars($guest['password']) ?>" placeholder="Guest Password">
-    <button type="submit">Save Guest Settings</button>
+    <button type="submit">Save Guest</button>
   </form>
 
   <h2>Add New Friend</h2>
@@ -84,7 +83,7 @@ $guest = getGuest();
     <input type="hidden" name="action" value="add_user">
     <input type="text" name="name" placeholder="Friend Name" required>
     <input type="text" name="password" placeholder="Password" required>
-    <input type="number" name="maxUses" value="20" placeholder="Max Uses">
+    <input type="number" name="maxUses" value="20">
     <button type="submit">Add Friend</button>
   </form>
 
@@ -97,7 +96,7 @@ $guest = getGuest();
       <form method="post" style="display:inline;">
         <input type="hidden" name="action" value="remove_user">
         <input type="hidden" name="index" value="<?= $i ?>">
-        <button type="submit" onclick="return confirm('Remove?')">Remove</button>
+        <button type="submit" onclick="return confirm('Remove this friend?')">Remove</button>
       </form>
     </div>
   <?php endforeach; ?>
