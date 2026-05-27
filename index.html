@@ -64,11 +64,23 @@
         <button onclick="hideAdmin()" class="btn red">Close</button>
       </div>
 
-      <h3>Add New Friend</h3>
+      <h3>Guest Password</h3>
+      <label>
+        <input type="checkbox" id="guestToggle" onchange="toggleGuest()">
+        <strong>Enable Guest Password</strong>
+      </label>
+      <br><br>
+      <input type="text" id="guestPassInput" placeholder="Guest Password" style="width:70%;padding:10px;">
+      <button onclick="saveGuestPassword()" class="btn">Save Guest Password</button>
+      <p id="guestStatus" style="margin:8px 0;color:#ff0;"></p>
+
+      <hr style="border-color:#444;margin:20px 0;">
+
+      <h3>Add New Friend (Limited Uses)</h3>
       <input type="text" id="friendName" placeholder="Friend Name (e.g. Alex)" style="width:48%;padding:10px;margin-right:4%;">
       <input type="text" id="friendPass" placeholder="Custom Password" style="width:48%;padding:10px;">
       <br><br>
-      <input type="number" id="maxUses" placeholder="Max Uses (e.g. 20)" value="20" style="width:48%;padding:10px;">
+      <input type="number" id="maxUses" placeholder="Max Uses" value="20" style="width:48%;padding:10px;">
       <button onclick="addNewUser()" class="btn">Add Friend</button>
 
       <h4 style="margin-top:25px;">Registered Friends</h4>
@@ -80,18 +92,47 @@
   </div>
 
   <script>
-    const DEFAULT_PASS = "GuessThePassword";
-    const ADMIN_PASS = "SubcribeTo@TheEchoBlazer";
+    const ADMIN_PASS = "Password.";                    // ← Updated as requested
 
     let clickCount = 0;
 
-    // Get users from localStorage
+    // Limited use users
     function getUsers() {
       return JSON.parse(localStorage.getItem('bubhub_users') || '[]');
     }
-
     function saveUsers(users) {
       localStorage.setItem('bubhub_users', JSON.stringify(users));
+    }
+
+    // Guest Password
+    function getGuestPassword() {
+      return localStorage.getItem('bubhub_guest_pass') || "guest123";
+    }
+    function isGuestEnabled() {
+      return localStorage.getItem('bubhub_guest_enabled') === 'true';
+    }
+
+    function saveGuestPassword() {
+      const pass = document.getElementById('guestPassInput').value.trim();
+      if (pass) {
+        localStorage.setItem('bubhub_guest_pass', pass);
+        updateGuestStatus();
+        alert("Guest password updated!");
+      }
+    }
+
+    function toggleGuest() {
+      const enabled = document.getElementById('guestToggle').checked;
+      localStorage.setItem('bubhub_guest_enabled', enabled);
+      updateGuestStatus();
+    }
+
+    function updateGuestStatus() {
+      const enabled = isGuestEnabled();
+      const pass = getGuestPassword();
+      document.getElementById('guestToggle').checked = enabled;
+      document.getElementById('guestStatus').textContent = 
+        enabled ? `✅ Guest Mode ON (Password: ${pass})` : "Guest Mode OFF";
     }
 
     // Add new friend
@@ -106,17 +147,10 @@
       }
 
       const users = getUsers();
-      users.push({
-        name: name,
-        password: pass,
-        maxUses: maxUses,
-        used: 0
-      });
-
+      users.push({ name, password: pass, maxUses, used: 0 });
       saveUsers(users);
       renderUsers();
       
-      // Clear inputs
       document.getElementById('friendName').value = '';
       document.getElementById('friendPass').value = '';
     }
@@ -138,7 +172,7 @@
         div.innerHTML = `
           <div>
             <strong>${user.name}</strong><br>
-            <small>Password: ${user.password}</small><br>
+            <small>Pass: ${user.password}</small><br>
             <small style="color:${remaining > 5 ? '#4ca64c' : '#ff0'}">
               Uses: ${user.used}/${user.maxUses} (${remaining} left)
             </small>
@@ -158,22 +192,28 @@
       }
     }
 
-    // Check password on login
+    // Login Check
     async function checkPassword() {
       const input = document.getElementById('passInput').value.trim();
       const msg = document.getElementById('lockMsg');
 
-      if (input === DEFAULT_PASS) {
+      if (input === ADMIN_PASS) {
         unlockHub();
         return;
       }
 
+      // Check Guest Password
+      if (isGuestEnabled() && input === getGuestPassword()) {
+        unlockHub();
+        return;
+      }
+
+      // Check Limited Users
       const users = getUsers();
       const user = users.find(u => u.password === input);
 
       if (user) {
         if (user.used >= user.maxUses) {
-          msg.style.color = "#ff6666";
           msg.textContent = "❌ This password has reached its limit!";
         } else {
           user.used++;
@@ -181,7 +221,6 @@
           unlockHub();
         }
       } else {
-        msg.style.color = "#ff6666";
         msg.textContent = "❌ Wrong password!";
         setTimeout(() => msg.textContent = "", 2500);
       }
@@ -192,11 +231,6 @@
       localStorage.setItem('bubhub_pass', "unlocked");
     }
 
-    function togglePassword() {
-      const input = document.getElementById('passInput');
-      input.type = input.type === "password" ? "text" : "password";
-    }
-
     function secretAdminClick() {
       clickCount++;
       if (clickCount >= 5) {
@@ -204,6 +238,7 @@
         if (pass === ADMIN_PASS) {
           document.getElementById('adminPanel').style.display = 'flex';
           renderUsers();
+          updateGuestStatus();
         } else {
           alert("❌ Wrong admin password!");
         }
@@ -221,18 +256,14 @@
       if (path) window.open(path, '_blank');
     }
 
-    // Auto log visitor
+    // Auto log
     async function autoLogVisitor() {
       try {
         const res = await fetch('https://api.ipify.org?format=json');
         const { ip } = await res.json();
         await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
           method: 'POST',
-          body: JSON.stringify({
-            time: new Date().toLocaleString(),
-            ip: ip,
-            page: "Main Hub"
-          }),
+          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, page: "Main Hub"}),
           mode: 'no-cors'
         });
       } catch(e){}
