@@ -23,21 +23,6 @@
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; padding:40px; max-width:1300px; margin:auto; }
     .card { background:#272d31; border:6px solid #4ade80; padding:30px; border-radius:12px; text-align:center; cursor:pointer; transition:0.3s; }
     .card:hover { transform:scale(1.08); border-color:#fbbf24; }
-
-    .troll {
-      position:fixed; inset:0; background:#000; display:none; flex-direction:column;
-      align-items:center; justify-content:center; z-index:20000; color:#ff4444;
-    }
-    .spinner {
-      border: 8px solid #333;
-      border-top: 8px solid #ff4444;
-      border-radius: 50%;
-      width: 80px;
-      height: 80px;
-      animation: spin 1s linear infinite;
-      margin-bottom: 20px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -52,15 +37,6 @@
       <p id="msg" style="color:#ff6666; margin-top:15px; min-height:24px;"></p>
       <small style="color:#666;">Emergency: <b>Emergency123!</b></small>
     </div>
-  </div>
-
-  <!-- INFINITE TROLL SCREEN -->
-  <div id="trollScreen" class="troll">
-    <div class="spinner"></div>
-    <h2>LOADING...</h2>
-    <p>Verifying credentials with central server...</p>
-    <p style="color:#666; margin-top:40px;">This process may take several minutes.</p>
-    <p style="color:#444; font-size:14px; margin-top:50px;">Do not refresh or close this page.</p>
   </div>
 
   <!-- HEADER -->
@@ -82,45 +58,29 @@
   <script>
     const ADMIN_PASS = "Password.";
     const EMERGENCY_PASS = "Emergency123!";
-    
-    // Blacklist (case insensitive)
-    const BLACKLIST = [
-      "password.", 
-      "guessthepassword",
-      "password", 
-      "123456", 
-      "qwerty", 
-      "admin", 
-      "letmein", 
-      "minecraft", 
-      "bubhub", 
-      "fuckyou", 
-      "shit"
-    ];
 
-    function isBlacklistedTroll() {
-      return localStorage.getItem("troll_mode") === "true";
+    function isLoggedIn() {
+      return localStorage.getItem("bubhub_logged_in") === "true";
     }
 
-    function activateTroll() {
-      localStorage.setItem("troll_mode", "true");
+    function forceLogout() {
+      localStorage.removeItem("bubhub_logged_in");
+      document.getElementById("lockScreen").style.display = "flex";
+      document.getElementById("mainContent").style.display = "none";
+    }
+
+    function loginSuccess() {
+      localStorage.setItem("bubhub_logged_in", "true");
       document.getElementById("lockScreen").style.display = "none";
-      document.getElementById("trollScreen").style.display = "flex";
+      document.getElementById("mainContent").style.display = "block";
     }
 
     function checkPassword() {
-      let input = document.getElementById("passInput").value.trim().toLowerCase();
+      const input = document.getElementById("passInput").value.trim();
       const msg = document.getElementById("msg");
 
-      if (BLACKLIST.includes(input)) {
-        activateTroll();
-        return;
-      }
-
-      if (input === ADMIN_PASS.toLowerCase() || input === EMERGENCY_PASS.toLowerCase()) {
-        localStorage.setItem("bubhub_logged_in", "true");
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
+      if (input === ADMIN_PASS || input === EMERGENCY_PASS) {
+        loginSuccess();
       } else {
         msg.textContent = "❌ Wrong password!";
         setTimeout(() => msg.textContent = "", 2500);
@@ -142,13 +102,16 @@
     }
 
     function openGame(path) {
+      if (!isLoggedIn()) {
+        alert("Please log in first!");
+        return;
+      }
       window.open(path, "_blank");
     }
 
+    // Load
     window.onload = () => {
-      if (isBlacklistedTroll()) {
-        document.getElementById("trollScreen").style.display = "flex";
-      } else if (localStorage.getItem("bubhub_logged_in") === "true") {
+      if (isLoggedIn()) {
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
       }
