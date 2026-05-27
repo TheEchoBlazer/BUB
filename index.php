@@ -4,24 +4,66 @@ session_start();
 $ADMIN_PASS = "Password.";
 $EMERGENCY_PASS = "Emergency123!";
 
+$usersFile = 'users.json';
+$guestFile = 'guest.json';
+
+function loadUsers() {
+    global $usersFile;
+    if (file_exists($usersFile)) {
+        return json_decode(file_get_contents($usersFile), true) ?: [];
+    }
+    return [];
+}
+
+function saveUsers($users) {
+    global $usersFile;
+    file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
+}
+
+function getGuest() {
+    global $guestFile;
+    if (file_exists($guestFile)) {
+        return json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'];
+    }
+    return ['enabled' => false, 'password' => 'guest123'];
+}
+
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     $pass = trim($_POST['password']);
-    
+    $users = loadUsers();
+    $guest = getGuest();
+
     if ($pass === $ADMIN_PASS || $pass === $EMERGENCY_PASS) {
         $_SESSION['logged_in'] = true;
         $_SESSION['is_admin'] = true;
-        header("Location: main.php");
+        header("Location: index.php");
         exit;
-    } else {
-        $error = "Wrong password! Try Emergency123!";
     }
+
+    if ($guest['enabled'] && $pass === $guest['password']) {
+        $_SESSION['logged_in'] = true;
+        header("Location: index.php");
+        exit;
+    }
+
+    foreach ($users as &$user) {
+        if ($user['password'] === $pass && $user['used'] < $user['maxUses']) {
+            $user['used']++;
+            saveUsers($users);
+            $_SESSION['logged_in'] = true;
+            header("Location: index.php");
+            exit;
+        }
+    }
+
+    $error = "Wrong password or limit reached!";
 }
 
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: main.php");
+    header("Location: index.php");
     exit;
 }
 ?>
