@@ -3,38 +3,38 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Minecraft-style Game Hub</title>
+  <title>BUB Hub</title>
   <style>
     :root{ --grass: #4ca64c; --dirt: #7a4f2a; }
     html,body{height:100%;margin:0;font-family:system-ui,sans-serif;background:linear-gradient(#86c6ff 0%,#cfefff 100%);color:#111;}
     header{display:flex;align-items:center;gap:14px;padding:18px 22px;background:linear-gradient(180deg,var(--grass),#3f8f3f);box-shadow:0 6px 0 var(--dirt);color:white;}
     .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;cursor:pointer;}
     .logo .block{width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
-
     .btn{background:linear-gradient(180deg,#4caf50,#357a38);border:3px solid #2e6b2e;color:white;padding:10px 20px;border-radius:4px;cursor:pointer;font-weight:700;}
     .btn:hover{transform:translateY(-2px);}
-
+    .btn.red{background:linear-gradient(180deg,#f44336,#d32f2f);border-color:#b71c1c;}
+    
     .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:20000;}
-    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:20px;width:95%;max-width:1200px;height:90vh;border-radius:8px;color:white;display:flex;flex-direction:column;}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
-    iframe{flex:1;border:0;background:#000;width:100%;}
-
+    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:20px;width:95%;max-width:900px;max-height:95vh;border-radius:8px;color:white;display:flex;flex-direction:column;overflow:auto;}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:10px;}
-    .card{background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;}
+    .card{background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;cursor:pointer;}
+    .card:hover{border-color:#fff;}
+
+    .user-item {
+      display: flex; justify-content: space-between; align-items: center;
+      background:#222; padding:12px; margin:6px 0; border-radius:6px;
+    }
   </style>
 </head>
 <body>
-
   <!-- PASSWORD LOCK -->
   <div id="lockScreen">
-    <div style="background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;max-width:360px;width:90%;">
+    <div style="background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;max-width:380px;width:90%;">
       <h2 style="color:#4ca64c;">🔒 BUB HUB</h2>
-      <p>Enter password to continue</p>
-      <div style="position:relative;width:100%;margin:15px 0;">
-        <input type="password" id="passInput" placeholder="Password" style="width:100%;padding:16px 50px 16px 16px;font-size:20px;background:#222;color:white;border:5px solid #4ca64c;">
-        <button onclick="togglePassword()" style="position:absolute;right:15px;top:50%;transform:translateY(-50%);background:none;border:none;color:#4ca64c;font-size:24px;cursor:pointer;">👁</button>
-      </div>
-      <button onclick="checkPassword()" class="btn">UNLOCK HUB</button>
+      <p>Enter your password</p>
+      <input type="password" id="passInput" placeholder="Password" style="width:100%;padding:16px;font-size:20px;background:#222;color:white;border:5px solid #4ca64c;margin:15px 0;">
+      <button onclick="checkPassword()" class="btn" style="width:100%;">UNLOCK HUB</button>
       <p id="lockMsg" style="color:#ff6666;margin-top:10px;"></p>
     </div>
   </div>
@@ -48,11 +48,11 @@
 
   <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
     <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px;">
-      <div class="card" data-path="games/kdata.html" onclick="openLocalGame(this)"><div class="thumb">kdata</div><h3>Kdata Game Hub</h3></div>
-      <div class="card" data-path="games/thegub.html" onclick="openLocalGame(this)"><div class="thumb">thegub</div><h3>thegub</h3></div>
-      <div class="card" data-path="games/thehub.html" onclick="openLocalGame(this)"><div class="thumb">thehub</div><h3>thehub</h3></div>
-      <div class="card" data-path="games/myai.html" onclick="openLocalGame(this)"><div class="thumb" style="background:#0f0f0f;color:#0f0;">🤖</div><h3>MyAI - Echo</h3></div>
+    <div class="grid">
+      <div class="card" data-path="games/kdata.html" onclick="openLocalGame(this)"><h3>Kdata Game Hub</h3></div>
+      <div class="card" data-path="games/thegub.html" onclick="openLocalGame(this)"><h3>thegub</h3></div>
+      <div class="card" data-path="games/thehub.html" onclick="openLocalGame(this)"><h3>thehub</h3></div>
+      <div class="card" data-path="games/myai.html" onclick="openLocalGame(this)"><h3>MyAI - Echo</h3></div>
     </div>
   </main>
 
@@ -61,58 +61,149 @@
     <div class="panel">
       <div class="topbar">
         <h2>🔧 ADMIN PANEL</h2>
-        <button onclick="hideAdmin()" style="background:#ff5f5f;padding:8px 16px;">Close</button>
+        <button onclick="hideAdmin()" class="btn red">Close</button>
       </div>
-      <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">👉 View Live Visitor Logs</a>
-    </div>
-  </div>
 
-  <!-- PROXIES / PREMIUM VIEWER -->
-  <div id="viewer" class="overlay">
-    <div class="panel">
-      <div class="topbar">
-        <h2 id="viewerTitle">Loading...</h2>
-        <button onclick="closeViewer()" style="background:#ff5f5f;padding:8px 16px;">Close</button>
-      </div>
-      <iframe id="viewerFrame"></iframe>
+      <h3>Add New Friend</h3>
+      <input type="text" id="friendName" placeholder="Friend Name (e.g. Alex)" style="width:48%;padding:10px;margin-right:4%;">
+      <input type="text" id="friendPass" placeholder="Custom Password" style="width:48%;padding:10px;">
+      <br><br>
+      <input type="number" id="maxUses" placeholder="Max Uses (e.g. 20)" value="20" style="width:48%;padding:10px;">
+      <button onclick="addNewUser()" class="btn">Add Friend</button>
+
+      <h4 style="margin-top:25px;">Registered Friends</h4>
+      <div id="usersList"></div>
+
+      <br>
+      <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">👉 View Live Visitor Logs</a>
     </div>
   </div>
 
   <script>
     const DEFAULT_PASS = "GuessThePassword";
     const ADMIN_PASS = "SubcribeTo@TheEchoBlazer";
+
     let clickCount = 0;
 
-    function checkPassword(){
-      const input = document.getElementById('passInput').value.trim();
-      if(input === DEFAULT_PASS || input === localStorage.getItem('bubhub_pass')){
-        localStorage.setItem('bubhub_pass', input);
-        document.getElementById('lockScreen').style.display = 'none';
-      } else {
-        document.getElementById('lockMsg').textContent = "❌ Wrong password!";
-        setTimeout(() => document.getElementById('lockMsg').textContent = "", 2000);
+    // Get users from localStorage
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('bubhub_users') || '[]');
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('bubhub_users', JSON.stringify(users));
+    }
+
+    // Add new friend
+    function addNewUser() {
+      const name = document.getElementById('friendName').value.trim();
+      const pass = document.getElementById('friendPass').value.trim();
+      const maxUses = parseInt(document.getElementById('maxUses').value) || 10;
+
+      if (!name || !pass) {
+        alert("Name and Password are required!");
+        return;
+      }
+
+      const users = getUsers();
+      users.push({
+        name: name,
+        password: pass,
+        maxUses: maxUses,
+        used: 0
+      });
+
+      saveUsers(users);
+      renderUsers();
+      
+      // Clear inputs
+      document.getElementById('friendName').value = '';
+      document.getElementById('friendPass').value = '';
+    }
+
+    function renderUsers() {
+      const listEl = document.getElementById('usersList');
+      const users = getUsers();
+      listEl.innerHTML = '';
+
+      if (users.length === 0) {
+        listEl.innerHTML = '<p style="color:#888;">No friends added yet.</p>';
+        return;
+      }
+
+      users.forEach((user, index) => {
+        const remaining = user.maxUses - user.used;
+        const div = document.createElement('div');
+        div.className = 'user-item';
+        div.innerHTML = `
+          <div>
+            <strong>${user.name}</strong><br>
+            <small>Password: ${user.password}</small><br>
+            <small style="color:${remaining > 5 ? '#4ca64c' : '#ff0'}">
+              Uses: ${user.used}/${user.maxUses} (${remaining} left)
+            </small>
+          </div>
+          <button onclick="removeUser(${index})" class="btn red" style="padding:6px 12px;">Remove</button>
+        `;
+        listEl.appendChild(div);
+      });
+    }
+
+    function removeUser(index) {
+      if (confirm("Remove this friend?")) {
+        let users = getUsers();
+        users.splice(index, 1);
+        saveUsers(users);
+        renderUsers();
       }
     }
 
-    function togglePassword(){
+    // Check password on login
+    async function checkPassword() {
+      const input = document.getElementById('passInput').value.trim();
+      const msg = document.getElementById('lockMsg');
+
+      if (input === DEFAULT_PASS) {
+        unlockHub();
+        return;
+      }
+
+      const users = getUsers();
+      const user = users.find(u => u.password === input);
+
+      if (user) {
+        if (user.used >= user.maxUses) {
+          msg.style.color = "#ff6666";
+          msg.textContent = "❌ This password has reached its limit!";
+        } else {
+          user.used++;
+          saveUsers(users);
+          unlockHub();
+        }
+      } else {
+        msg.style.color = "#ff6666";
+        msg.textContent = "❌ Wrong password!";
+        setTimeout(() => msg.textContent = "", 2500);
+      }
+    }
+
+    function unlockHub() {
+      document.getElementById('lockScreen').style.display = 'none';
+      localStorage.setItem('bubhub_pass', "unlocked");
+    }
+
+    function togglePassword() {
       const input = document.getElementById('passInput');
-      const btn = input.parentElement.querySelector('button');
       input.type = input.type === "password" ? "text" : "password";
-      btn.textContent = input.type === "password" ? "👁" : "🙈";
     }
 
-    function openLocalGame(el){
-      const path = el.getAttribute('data-path');
-      if(path) window.open(path, '_blank');
-    }
-
-    // Secret Admin (click logo 5 times)
-    function secretAdminClick(){
+    function secretAdminClick() {
       clickCount++;
-      if(clickCount >= 5){
+      if (clickCount >= 5) {
         const pass = prompt("Enter Admin Password:");
-        if(pass === ADMIN_PASS){
+        if (pass === ADMIN_PASS) {
           document.getElementById('adminPanel').style.display = 'flex';
+          renderUsers();
         } else {
           alert("❌ Wrong admin password!");
         }
@@ -121,50 +212,37 @@
       setTimeout(() => clickCount = 0, 2500);
     }
 
-    function hideAdmin(){ document.getElementById('adminPanel').style.display = 'none'; }
-
-    // Open any link inside the viewer (same tab)
-    function openInViewer(title, url){
-      document.getElementById('viewerTitle').textContent = title;
-      document.getElementById('viewerFrame').src = url;
-      document.getElementById('viewer').style.display = 'flex';
+    function hideAdmin() {
+      document.getElementById('adminPanel').style.display = 'none';
     }
 
-    function closeViewer(){
-      document.getElementById('viewerFrame').src = 'about:blank';
-      document.getElementById('viewer').style.display = 'none';
+    function openLocalGame(el) {
+      const path = el.getAttribute('data-path');
+      if (path) window.open(path, '_blank');
     }
 
-    // Admin can open proxies/premium here
-    function showProxies(){
-      hideAdmin();
-      // Example: Open one proxy by default, or you can add buttons inside admin
-      openInViewer("CroxyProxy", "https://www.croxyproxy.com/");
-    }
-
-    function showPremium(){
-      hideAdmin();
-      openInViewer("Unblocked Games 77", "https://sites.google.com/site/unblockedgames77/");
-    }
-
-    // Auto logging
+    // Auto log visitor
     async function autoLogVisitor() {
       try {
         const res = await fetch('https://api.ipify.org?format=json');
         const { ip } = await res.json();
         await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
           method: 'POST',
-          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, page: "Main Hub"}),
+          body: JSON.stringify({
+            time: new Date().toLocaleString(),
+            ip: ip,
+            page: "Main Hub"
+          }),
           mode: 'no-cors'
         });
       } catch(e){}
     }
 
     window.addEventListener('load', () => {
-      autoLogVisitor();
-      if(localStorage.getItem('bubhub_pass')){
+      if (localStorage.getItem('bubhub_pass')) {
         document.getElementById('lockScreen').style.display = 'none';
       }
+      autoLogVisitor();
     });
   </script>
 </body>
