@@ -7,12 +7,10 @@ define('EMERGENCY_PASS', 'Emergency123!');
 $usersFile = 'users.json';
 $guestFile = 'guest.json';
 
+// Simple functions
 function loadUsers() {
     global $usersFile;
-    if (file_exists($usersFile)) {
-        return json_decode(file_get_contents($usersFile), true) ?: [];
-    }
-    return [];
+    return file_exists($usersFile) ? json_decode(file_get_contents($usersFile), true) ?: [] : [];
 }
 
 function saveUsers($users) {
@@ -22,19 +20,11 @@ function saveUsers($users) {
 
 function getGuest() {
     global $guestFile;
-    if (file_exists($guestFile)) {
-        return json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'];
-    }
-    return ['enabled' => false, 'password' => 'guest123'];
-}
-
-function saveGuest($data) {
-    global $guestFile;
-    file_put_contents($guestFile, json_encode($data, JSON_PRETTY_PRINT));
+    return file_exists($guestFile) ? json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'] : ['enabled' => false, 'password' => 'guest123'];
 }
 
 // Handle Login
-if (isset($_POST['login'])) {
+if (isset($_POST['password'])) {
     $pass = trim($_POST['password']);
     $users = loadUsers();
     $guest = getGuest();
@@ -45,20 +35,19 @@ if (isset($_POST['login'])) {
     } elseif ($guest['enabled'] && $pass === $guest['password']) {
         $_SESSION['logged_in'] = true;
     } else {
-        $found = false;
         foreach ($users as &$user) {
             if ($user['password'] === $pass && $user['used'] < $user['maxUses']) {
                 $user['used']++;
                 saveUsers($users);
                 $_SESSION['logged_in'] = true;
-                $found = true;
                 break;
             }
         }
-        if (!$found && isset($_POST['login'])) {
-            $error = true;
-        }
     }
+    
+    // Refresh page after login attempt
+    header("Location: main.php");
+    exit;
 }
 
 if (isset($_GET['logout'])) {
@@ -75,26 +64,22 @@ if (isset($_GET['logout'])) {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BUB Hub</title>
   <style>
-    :root {
-      --grass: #5cb85c;
-      --darkgrass: #4a9c4a;
-    }
+    :root { --glow: #4ade80; }
     * { box-sizing: border-box; }
     html,body {
-      height:100%; margin:0; 
+      height:100%; margin:0; padding:0;
       font-family: system-ui, sans-serif;
-      background: linear-gradient(180deg, #1e3a8a 0%, #3b82f6 100%);
+      background: linear-gradient(180deg, #1e3a8a, #3b82f6);
       color: #fff;
       overflow: hidden;
     }
 
     header {
-      background: linear-gradient(180deg, var(--grass), var(--darkgrass));
+      background: linear-gradient(180deg, #5cb85c, #4a9c4a);
       padding: 20px;
       text-align: center;
       font-size: 28px;
       font-weight: bold;
-      box-shadow: 0 6px 0 #8b5a2b;
       cursor: pointer;
     }
 
@@ -110,7 +95,7 @@ if (isset($_GET['logout'])) {
 
     .lock-box {
       background: #1f2528;
-      border: 10px solid #4ade80;
+      border: 10px solid var(--glow);
       padding: 50px 40px;
       border-radius: 16px;
       text-align: center;
@@ -119,19 +104,13 @@ if (isset($_GET['logout'])) {
       box-shadow: 0 0 60px rgba(74, 222, 128, 0.9);
     }
 
-    .lock-box h2 {
-      color: #4ade80;
-      font-size: 36px;
-      margin: 0 0 10px 0;
-    }
-
     input {
       width: 100%;
       padding: 18px;
       font-size: 22px;
       background: #111;
       color: white;
-      border: 6px solid #4ade80;
+      border: 6px solid var(--glow);
       border-radius: 8px;
       margin-bottom: 20px;
     }
@@ -147,29 +126,6 @@ if (isset($_GET['logout'])) {
       border-radius: 8px;
       cursor: pointer;
     }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 40px;
-      max-width: 1300px;
-      margin: auto;
-    }
-
-    .card {
-      background: #272d31;
-      border: 6px solid #4ade80;
-      padding: 25px;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.08);
-      border-color: #fbbf24;
-    }
   </style>
 </head>
 <body>
@@ -180,12 +136,9 @@ if (isset($_GET['logout'])) {
       <h2>🔒 BUB HUB</h2>
       <p>Enter your password to continue</p>
       <form method="post">
-        <input type="password" name="password" placeholder="Password" required>
-        <button type="submit" name="login">UNLOCK HUB</button>
+        <input type="password" name="password" placeholder="Password" required autofocus>
+        <button type="submit">UNLOCK HUB</button>
       </form>
-      <?php if (isset($error)): ?>
-        <p style="color:#ff6666; margin-top:15px;">❌ Wrong password or limit reached</p>
-      <?php endif; ?>
     </div>
   </div>
 <?php endif; ?>
@@ -198,13 +151,13 @@ if (isset($_GET['logout'])) {
 </header>
 
 <?php if (isset($_SESSION['logged_in'])): ?>
-  <main>
-    <h2 style="text-align:center; margin:40px 0 20px;">🎮 Your Local Games</h2>
-    <div class="grid">
-      <div class="card" onclick="window.open('games/kdata.html', '_blank')">Kdata Game Hub</div>
-      <div class="card" onclick="window.open('games/thegub.html', '_blank')">thegub</div>
-      <div class="card" onclick="window.open('games/thehub.html', '_blank')">thehub</div>
-      <div class="card" onclick="window.open('games/myai.html', '_blank')">MyAI - Echo</div>
+  <main style="padding:40px; text-align:center;">
+    <h2 style="margin-bottom:30px;">🎮 Your Local Games</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:20px; max-width:1200px; margin:auto;">
+      <div style="background:#272d31; border:6px solid #4ade80; padding:25px; border-radius:12px; cursor:pointer;" onclick="window.open('games/kdata.html', '_blank')">Kdata Game Hub</div>
+      <div style="background:#272d31; border:6px solid #4ade80; padding:25px; border-radius:12px; cursor:pointer;" onclick="window.open('games/thegub.html', '_blank')">thegub</div>
+      <div style="background:#272d31; border:6px solid #4ade80; padding:25px; border-radius:12px; cursor:pointer;" onclick="window.open('games/thehub.html', '_blank')">thehub</div>
+      <div style="background:#272d31; border:6px solid #4ade80; padding:25px; border-radius:12px; cursor:pointer;" onclick="window.open('games/myai.html', '_blank')">MyAI - Echo</div>
     </div>
   </main>
 <?php endif; ?>
