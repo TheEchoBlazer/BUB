@@ -15,69 +15,14 @@
       overflow: hidden;
     }
 
-    .lock {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,0.97);
-      display: flex; align-items: center; justify-content: center;
-      z-index: 10000;
-    }
+    .lock { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:10000; }
+    .box { background:#1f2528; border:10px solid var(--glow); padding:50px 40px; border-radius:16px; text-align:center; max-width:420px; width:90%; box-shadow:0 0 60px rgba(74,222,128,0.9); }
+    input { width:100%; padding:18px; font-size:22px; background:#111; color:white; border:6px solid var(--glow); border-radius:8px; margin-bottom:20px; }
+    button { width:100%; padding:16px; font-size:18px; font-weight:bold; background:#4ade80; color:black; border:none; border-radius:8px; cursor:pointer; }
 
-    .box {
-      background: #1f2528;
-      border: 10px solid var(--glow);
-      padding: 50px 40px;
-      border-radius: 16px;
-      text-align: center;
-      max-width: 420px;
-      width: 90%;
-      box-shadow: 0 0 60px rgba(74, 222, 128, 0.9);
-    }
-
-    input {
-      width: 100%;
-      padding: 18px;
-      font-size: 22px;
-      background: #111;
-      color: white;
-      border: 6px solid var(--glow);
-      border-radius: 8px;
-      margin-bottom: 20px;
-    }
-
-    button {
-      width: 100%;
-      padding: 16px;
-      font-size: 18px;
-      font-weight: bold;
-      background: #4ade80;
-      color: black;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-      gap: 20px;
-      padding: 40px;
-      max-width: 1300px;
-      margin: auto;
-    }
-
-    .card {
-      background: #272d31;
-      border: 6px solid #4ade80;
-      padding: 30px;
-      border-radius: 12px;
-      text-align: center;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .card:hover {
-      transform: scale(1.08);
-      border-color: #fbbf24;
-    }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; padding:40px; max-width:1300px; margin:auto; }
+    .card { background:#272d31; border:6px solid #4ade80; padding:30px; border-radius:12px; text-align:center; cursor:pointer; transition:0.3s; }
+    .card:hover { transform:scale(1.08); border-color:#fbbf24; }
   </style>
 </head>
 <body>
@@ -118,6 +63,12 @@
       return localStorage.getItem("bubhub_logged_in") === "true";
     }
 
+    function forceLogout() {
+      localStorage.removeItem("bubhub_logged_in");
+      document.getElementById("lockScreen").style.display = "flex";
+      document.getElementById("mainContent").style.display = "none";
+    }
+
     function loginSuccess() {
       localStorage.setItem("bubhub_logged_in", "true");
       document.getElementById("lockScreen").style.display = "none";
@@ -132,30 +83,33 @@
         loginSuccess();
       } else {
         msg.textContent = "❌ Wrong password!";
-        setTimeout(() => msg.textContent = "", 3000);
+        setTimeout(() => msg.textContent = "", 2500);
       }
     }
 
     function adminClick() {
       let count = parseInt(sessionStorage.getItem("clickCount") || "0") + 1;
       sessionStorage.setItem("clickCount", count);
-
       if (count >= 5) {
         const pass = prompt("Enter Admin Password:");
         if (pass === ADMIN_PASS || pass === EMERGENCY_PASS) {
-          window.location.href = "admin.html"; // We'll make this next if you want
+          window.location.href = "admin.html";
         } else {
-          alert("Wrong password");
+          alert("Wrong admin password");
         }
         sessionStorage.setItem("clickCount", "0");
       }
     }
 
     function openGame(path) {
+      if (!isLoggedIn()) {
+        alert("Please log in first!");
+        return;
+      }
       window.open(path, "_blank");
     }
 
-    // Auto check on load
+    // Load
     window.onload = () => {
       if (isLoggedIn()) {
         document.getElementById("lockScreen").style.display = "none";
