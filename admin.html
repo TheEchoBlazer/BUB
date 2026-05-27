@@ -5,64 +5,28 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Admin Panel - BUB Hub</title>
   <style>
-    body {
-      margin: 0;
-      padding: 20px;
-      background: linear-gradient(180deg, #1e3a8a, #3b82f6);
-      font-family: system-ui, sans-serif;
-      color: white;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: #1f2528;
-      border: 10px solid #4ade80;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
-    }
-    input, button {
-      padding: 12px;
-      margin: 8px 0;
-      font-size: 16px;
-    }
-    button {
-      background: #4ade80;
-      color: black;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .red { background: #ff6666; color: white; }
-    .user-item {
-      background: #2a2f34;
-      padding: 15px;
-      margin: 10px 0;
-      border-radius: 8px;
-      border-left: 5px solid #4ade80;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .success { color: #4ade80; font-weight: bold; }
+    body { margin:0; padding:20px; background:linear-gradient(#1e3a8a,#3b82f6); font-family:system-ui; color:white; }
+    .container { max-width:900px; margin:auto; background:#1f2528; border:10px solid #4ade80; border-radius:16px; padding:30px; }
+    input, button { padding:12px; margin:8px 0; font-size:16px; }
+    button { background:#4ade80; color:black; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .red { background:#ff6666; color:white; }
+    .user-item { background:#2a2f34; padding:15px; margin:10px 0; border-radius:8px; border-left:5px solid #4ade80; display:flex; justify-content:space-between; align-items:center; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🔧 ADMIN PANEL</h1>
-    <p><strong>Admin Password:</strong> <code>NewAdmin123!</code></p>
-    <a href="index.html" style="color:#4ade80; font-size:18px;">← Back to Hub</a>
+    <a href="index.html" style="color:#4ade80;">← Back to Hub</a>
 
-    <hr>
+    <h2>Emergency: Emergency123!</h2>
 
     <h2>Guest Password</h2>
-    <input type="text" id="guestPass" placeholder="Guest Password" style="width:300px;">
-    <label><input type="checkbox" id="guestEnabled"> Enable Guest Mode</label>
-    <button onclick="saveGuest()">Save Guest Settings</button>
+    <input type="text" id="guestPass" placeholder="Guest Password">
+    <label><input type="checkbox" id="guestEnabled"> Enable Guest</label>
+    <button onclick="saveGuest()">Save Guest</button>
 
     <h2>Add New Friend</h2>
-    <input type="text" id="friendName" placeholder="Friend Name">
+    <input type="text" id="friendName" placeholder="Name">
     <input type="text" id="friendPass" placeholder="Password">
     <input type="number" id="maxUses" value="20">
     <button onclick="addFriend()">Add Friend</button>
@@ -77,14 +41,8 @@
       alert("✅ Changes saved! Everyone must re-enter password.");
     }
 
-    function getUsers() {
-      return JSON.parse(localStorage.getItem('bubhub_users') || '[]');
-    }
-
-    function saveUsers(users) {
-      localStorage.setItem('bubhub_users', JSON.stringify(users));
-      renderUsers();
-    }
+    function getUsers() { return JSON.parse(localStorage.getItem('bubhub_users') || '[]'); }
+    function saveUsers(users) { localStorage.setItem('bubhub_users', JSON.stringify(users)); }
 
     function addFriend() {
       const name = document.getElementById('friendName').value.trim();
@@ -94,39 +52,39 @@
       if (!name || !pass) return alert("Name and Password required!");
 
       const users = getUsers();
-      users.push({ name, password: pass, maxUses: max, used: 0 });
+      users.push({name, password: pass, maxUses: max, used: 0});
       saveUsers(users);
       forceReLogin();
 
       document.getElementById('friendName').value = '';
       document.getElementById('friendPass').value = '';
+      renderUsers();
     }
 
     function renderUsers() {
       const list = document.getElementById('usersList');
       const users = getUsers();
-      list.innerHTML = users.length === 0 ? '<p>No friends added yet.</p>' : '';
+      list.innerHTML = users.length === 0 ? '<p>No friends yet.</p>' : '';
 
-      users.forEach((user, index) => {
+      users.forEach((user, i) => {
         const div = document.createElement('div');
         div.className = 'user-item';
         div.innerHTML = `
-          <div>
-            <strong>${user.name}</strong> — ${user.password}<br>
-            <small>Uses: ${user.used}/${user.maxUses}</small>
-          </div>
-          <button class="red" onclick="removeFriend(${index})">Remove</button>
+          <div><strong>${user.name}</strong> — ${user.password}<br>
+          <small>Uses: ${user.used}/${user.maxUses}</small></div>
+          <button class="red" onclick="removeFriend(${i})">Remove</button>
         `;
         list.appendChild(div);
       });
     }
 
-    function removeFriend(index) {
-      if (confirm("Remove this friend?")) {
+    function removeFriend(i) {
+      if (confirm("Remove friend?")) {
         let users = getUsers();
-        users.splice(index, 1);
+        users.splice(i, 1);
         saveUsers(users);
         forceReLogin();
+        renderUsers();
       }
     }
 
@@ -139,11 +97,7 @@
       alert("Guest settings saved!");
     }
 
-    window.onload = () => {
-      document.getElementById('guestPass').value = localStorage.getItem('bubhub_guest_pass') || 'guest123';
-      document.getElementById('guestEnabled').checked = localStorage.getItem('bubhub_guest_enabled') === 'true';
-      renderUsers();
-    };
+    window.onload = renderUsers;
   </script>
 </body>
 </html>
