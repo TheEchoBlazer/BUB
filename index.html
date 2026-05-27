@@ -49,10 +49,10 @@
   <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
     <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
     <div class="grid">
-      <div class="card" data-path="games/kdata.html" onclick="openLocalGame(this)"><h3>Kdata Game Hub</h3></div>
-      <div class="card" data-path="games/thegub.html" onclick="openLocalGame(this)"><h3>thegub</h3></div>
-      <div class="card" data-path="games/thehub.html" onclick="openLocalGame(this)"><h3>thehub</h3></div>
-      <div class="card" data-path="games/myai.html" onclick="openLocalGame(this)"><h3>MyAI - Echo</h3></div>
+      <div class="card" data-path="games/kdata.html" onclick="openProtectedGame(this)"><h3>Kdata Game Hub</h3></div>
+      <div class="card" data-path="games/thegub.html" onclick="openProtectedGame(this)"><h3>thegub</h3></div>
+      <div class="card" data-path="games/thehub.html" onclick="openProtectedGame(this)"><h3>thehub</h3></div>
+      <div class="card" data-path="games/myai.html" onclick="openProtectedGame(this)"><h3>MyAI - Echo</h3></div>
     </div>
   </main>
 
@@ -92,32 +92,39 @@
   </div>
 
   <script>
-    const ADMIN_PASS = "Password.";                    // ← Updated as requested
+    const ADMIN_PASS = "Password.";   // Admin password
 
     let clickCount = 0;
 
-    // Limited use users
-    function getUsers() {
-      return JSON.parse(localStorage.getItem('bubhub_users') || '[]');
-    }
-    function saveUsers(users) {
-      localStorage.setItem('bubhub_users', JSON.stringify(users));
+    // Session Management
+    function isLoggedIn() {
+      return localStorage.getItem('bubhub_logged_in') === 'true';
     }
 
+    function setLoggedIn() {
+      localStorage.setItem('bubhub_logged_in', 'true');
+    }
+
+    function forceLogout() {
+      localStorage.removeItem('bubhub_logged_in');
+      localStorage.removeItem('bubhub_pass');
+    }
+
+    // Limited use users
+    function getUsers() { return JSON.parse(localStorage.getItem('bubhub_users') || '[]'); }
+    function saveUsers(users) { localStorage.setItem('bubhub_users', JSON.stringify(users)); }
+
     // Guest Password
-    function getGuestPassword() {
-      return localStorage.getItem('bubhub_guest_pass') || "guest123";
-    }
-    function isGuestEnabled() {
-      return localStorage.getItem('bubhub_guest_enabled') === 'true';
-    }
+    function getGuestPassword() { return localStorage.getItem('bubhub_guest_pass') || "guest123"; }
+    function isGuestEnabled() { return localStorage.getItem('bubhub_guest_enabled') === 'true'; }
 
     function saveGuestPassword() {
       const pass = document.getElementById('guestPassInput').value.trim();
       if (pass) {
         localStorage.setItem('bubhub_guest_pass', pass);
         updateGuestStatus();
-        alert("Guest password updated!");
+        forceLogout();           // Force everyone to re-login
+        alert("Guest password updated! Everyone must re-enter password.");
       }
     }
 
@@ -125,6 +132,7 @@
       const enabled = document.getElementById('guestToggle').checked;
       localStorage.setItem('bubhub_guest_enabled', enabled);
       updateGuestStatus();
+      forceLogout();             // Force re-login
     }
 
     function updateGuestStatus() {
@@ -135,7 +143,6 @@
         enabled ? `✅ Guest Mode ON (Password: ${pass})` : "Guest Mode OFF";
     }
 
-    // Add new friend
     function addNewUser() {
       const name = document.getElementById('friendName').value.trim();
       const pass = document.getElementById('friendPass').value.trim();
@@ -150,6 +157,7 @@
       users.push({ name, password: pass, maxUses, used: 0 });
       saveUsers(users);
       renderUsers();
+      forceLogout();               // Force re-login after adding user
       
       document.getElementById('friendName').value = '';
       document.getElementById('friendPass').value = '';
@@ -189,6 +197,7 @@
         users.splice(index, 1);
         saveUsers(users);
         renderUsers();
+        forceLogout();
       }
     }
 
@@ -198,17 +207,17 @@
       const msg = document.getElementById('lockMsg');
 
       if (input === ADMIN_PASS) {
+        setLoggedIn();
         unlockHub();
         return;
       }
 
-      // Check Guest Password
       if (isGuestEnabled() && input === getGuestPassword()) {
+        setLoggedIn();
         unlockHub();
         return;
       }
 
-      // Check Limited Users
       const users = getUsers();
       const user = users.find(u => u.password === input);
 
@@ -218,6 +227,7 @@
         } else {
           user.used++;
           saveUsers(users);
+          setLoggedIn();
           unlockHub();
         }
       } else {
@@ -228,7 +238,6 @@
 
     function unlockHub() {
       document.getElementById('lockScreen').style.display = 'none';
-      localStorage.setItem('bubhub_pass', "unlocked");
     }
 
     function secretAdminClick() {
@@ -251,7 +260,12 @@
       document.getElementById('adminPanel').style.display = 'none';
     }
 
-    function openLocalGame(el) {
+    // Protected Game Links
+    function openProtectedGame(el) {
+      if (!isLoggedIn()) {
+        alert("🔒 Please log in first!");
+        return;
+      }
       const path = el.getAttribute('data-path');
       if (path) window.open(path, '_blank');
     }
@@ -270,7 +284,7 @@
     }
 
     window.addEventListener('load', () => {
-      if (localStorage.getItem('bubhub_pass')) {
+      if (isLoggedIn()) {
         document.getElementById('lockScreen').style.display = 'none';
       }
       autoLogVisitor();
