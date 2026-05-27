@@ -3,118 +3,113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BUB Hub</title>
+  <title>Admin Panel - BUB Hub</title>
   <style>
-    :root { --glow: #4ade80; }
-    * { box-sizing: border-box; }
-    html,body {
-      height:100%; margin:0; padding:0;
-      font-family: system-ui, sans-serif;
-      background: linear-gradient(180deg, #1e3a8a, #3b82f6);
-      color: #fff;
-      overflow: hidden;
-    }
-
-    .lock { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:10000; }
-    .box { background:#1f2528; border:10px solid var(--glow); padding:50px 40px; border-radius:16px; text-align:center; max-width:420px; width:90%; box-shadow:0 0 60px rgba(74,222,128,0.9); }
-    input { width:100%; padding:18px; font-size:22px; background:#111; color:white; border:6px solid var(--glow); border-radius:8px; margin-bottom:20px; }
-    button { width:100%; padding:16px; font-size:18px; font-weight:bold; background:#4ade80; color:black; border:none; border-radius:8px; cursor:pointer; }
-
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; padding:40px; max-width:1300px; margin:auto; }
-    .card { background:#272d31; border:6px solid #4ade80; padding:30px; border-radius:12px; text-align:center; cursor:pointer; transition:0.3s; }
-    .card:hover { transform:scale(1.08); border-color:#fbbf24; }
+    body { margin:0; padding:20px; background:linear-gradient(#1e3a8a,#3b82f6); font-family:system-ui; color:white; }
+    .container { max-width:1000px; margin:auto; background:#1f2528; border:10px solid #4ade80; border-radius:16px; padding:30px; }
+    input, button { padding:12px; margin:6px 0; font-size:16px; }
+    button { background:#4ade80; color:black; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
+    .red { background:#ff6666; color:white; }
+    .user-item { background:#2a2f34; padding:15px; margin:10px 0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+    .success { color:#4ade80; font-weight:bold; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>🔧 ADMIN PANEL</h1>
+    <p><strong>New Admin Password:</strong> <code>NewAdmin123!</code></p>
+    <a href="index.html" style="color:#4ade80;">← Back to Hub</a>
 
-  <!-- LOCK SCREEN -->
-  <div id="lockScreen" class="lock">
-    <div class="box">
-      <h2>🔒 BUB HUB</h2>
-      <p>Enter your password to continue</p>
-      <input type="password" id="passInput" placeholder="Password" autofocus>
-      <button onclick="checkPassword()">UNLOCK HUB</button>
-      <p id="msg" style="color:#ff6666; margin-top:15px; min-height:24px;"></p>
-      <small style="color:#666;">Emergency: <b>Emergency123!</b></small>
-    </div>
+    <hr>
+
+    <h2>Guest Password</h2>
+    <input type="text" id="guestPass" placeholder="Guest Password" style="width:300px;">
+    <label><input type="checkbox" id="guestEnabled"> Enable Guest Mode</label>
+    <button onclick="saveGuest()">Save Guest</button>
+
+    <h2>Add New Friend</h2>
+    <input type="text" id="friendName" placeholder="Full Name">
+    <input type="text" id="friendPass" placeholder="Password">
+    <input type="number" id="maxUses" value="20">
+    <button onclick="addFriend()">Add Friend</button>
+
+    <h2>Current Users</h2>
+    <div id="usersList"></div>
   </div>
 
-  <!-- HEADER -->
-  <header style="background:#4a9c4a; padding:20px; text-align:center; font-size:28px; font-weight:bold; cursor:pointer;" onclick="adminClick()">
-    BUB Hub
-  </header>
-
-  <!-- MAIN CONTENT -->
-  <main id="mainContent" style="display:none; padding:40px; text-align:center;">
-    <h2>🎮 Your Local Games</h2>
-    <div class="grid">
-      <div class="card" onclick="openGame('games/kdata.html')">Kdata Game Hub</div>
-      <div class="card" onclick="openGame('games/thegub.html')">thegub</div>
-      <div class="card" onclick="openGame('games/thehub.html')">thehub</div>
-      <div class="card" onclick="openGame('games/myai.html')">MyAI - Echo</div>
-    </div>
-  </main>
-
   <script>
-    const ADMIN_PASS = "Password.";
-    const EMERGENCY_PASS = "Emergency123!";
-
-    function isLoggedIn() {
-      return localStorage.getItem("bubhub_logged_in") === "true";
-    }
-
-    function forceLogout() {
+    function forceReLogin() {
       localStorage.removeItem("bubhub_logged_in");
-      document.getElementById("lockScreen").style.display = "flex";
-      document.getElementById("mainContent").style.display = "none";
+      alert("✅ Changes saved! Everyone must re-login.");
     }
 
-    function loginSuccess() {
-      localStorage.setItem("bubhub_logged_in", "true");
-      document.getElementById("lockScreen").style.display = "none";
-      document.getElementById("mainContent").style.display = "block";
+    function getUsers() { return JSON.parse(localStorage.getItem('bubhub_users') || '[]'); }
+    function saveUsers(users) { localStorage.setItem('bubhub_users', JSON.stringify(users)); }
+
+    function addFriend() {
+      const name = document.getElementById('friendName').value.trim();
+      const pass = document.getElementById('friendPass').value.trim();
+      const max = parseInt(document.getElementById('maxUses').value) || 10;
+
+      if (!name || !pass) return alert("Name and Password required!");
+
+      const users = getUsers();
+      users.push({ name, password: pass, maxUses: max, used: 0 });
+      saveUsers(users);
+      forceReLogin();
+
+      document.getElementById('friendName').value = '';
+      document.getElementById('friendPass').value = '';
+      renderUsers();
     }
 
-    function checkPassword() {
-      const input = document.getElementById("passInput").value.trim();
-      const msg = document.getElementById("msg");
+    function renderUsers() {
+      const list = document.getElementById('usersList');
+      const users = getUsers();
+      list.innerHTML = '';
 
-      if (input === ADMIN_PASS || input === EMERGENCY_PASS) {
-        loginSuccess();
-      } else {
-        msg.textContent = "❌ Wrong password!";
-        setTimeout(() => msg.textContent = "", 2500);
-      }
-    }
-
-    function adminClick() {
-      let count = parseInt(sessionStorage.getItem("clickCount") || "0") + 1;
-      sessionStorage.setItem("clickCount", count);
-      if (count >= 5) {
-        const pass = prompt("Enter Admin Password:");
-        if (pass === ADMIN_PASS || pass === EMERGENCY_PASS) {
-          window.location.href = "admin.html";
-        } else {
-          alert("Wrong admin password");
-        }
-        sessionStorage.setItem("clickCount", "0");
-      }
-    }
-
-    function openGame(path) {
-      if (!isLoggedIn()) {
-        alert("Please log in first!");
+      if (users.length === 0) {
+        list.innerHTML = '<p>No users yet.</p>';
         return;
       }
-      window.open(path, "_blank");
+
+      users.forEach((user, i) => {
+        const div = document.createElement('div');
+        div.className = 'user-item';
+        div.innerHTML = `
+          <div>
+            <strong>${user.name}</strong> — ${user.password}<br>
+            <small>Uses: ${user.used}/${user.maxUses}</small>
+          </div>
+          <button class="red" onclick="removeFriend(${i})">Remove</button>
+        `;
+        list.appendChild(div);
+      });
     }
 
-    // Load
-    window.onload = () => {
-      if (isLoggedIn()) {
-        document.getElementById("lockScreen").style.display = "none";
-        document.getElementById("mainContent").style.display = "block";
+    function removeFriend(i) {
+      if (confirm("Remove this user?")) {
+        let users = getUsers();
+        users.splice(i, 1);
+        saveUsers(users);
+        forceReLogin();
+        renderUsers();
       }
+    }
+
+    function saveGuest() {
+      const pass = document.getElementById('guestPass').value.trim();
+      const enabled = document.getElementById('guestEnabled').checked;
+      localStorage.setItem('bubhub_guest_pass', pass);
+      localStorage.setItem('bubhub_guest_enabled', enabled);
+      forceReLogin();
+      alert("Guest settings saved!");
+    }
+
+    window.onload = () => {
+      document.getElementById('guestPass').value = localStorage.getItem('bubhub_guest_pass') || 'guest123';
+      document.getElementById('guestEnabled').checked = localStorage.getItem('bubhub_guest_enabled') === 'true';
+      renderUsers();
     };
   </script>
 </body>
