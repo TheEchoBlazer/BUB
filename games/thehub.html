@@ -1,4 +1,10 @@
 <!DOCTYPE html>
+<script>
+  if (localStorage.getItem('bubhub_logged_in') !== 'true') {
+    alert("🔒 Access Denied! Please log in from the main hub.");
+    window.location.href = "../index.html";   // or wherever your main page is
+  }
+</script>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
