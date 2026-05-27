@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-$ADMIN_PASS = "Password.";
+$ADMIN_PASS = "NewAdmin123!";
 $EMERGENCY_PASS = "Emergency123!";
 
 $usersFile = 'users.json';
