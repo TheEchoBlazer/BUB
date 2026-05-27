@@ -5,37 +5,132 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>BUB Hub</title>
   <style>
-    :root{ --grass: #4ca64c; --dirt: #7a4f2a; }
-    html,body{height:100%;margin:0;font-family:system-ui,sans-serif;background:linear-gradient(#86c6ff 0%,#cfefff 100%);color:#111;}
-    header{display:flex;align-items:center;gap:14px;padding:18px 22px;background:linear-gradient(180deg,var(--grass),#3f8f3f);box-shadow:0 6px 0 var(--dirt);color:white;}
-    .logo{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px;cursor:pointer;}
-    .logo .block{width:48px;height:48px;background:linear-gradient(180deg,#9b6d2f,#6f4924);border:4px solid #caa16f;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;}
-    .btn{background:linear-gradient(180deg,#4caf50,#357a38);border:3px solid #2e6b2e;color:white;padding:10px 20px;border-radius:4px;cursor:pointer;font-weight:700;}
-    .btn:hover{transform:translateY(-2px);}
-    .btn.red{background:linear-gradient(180deg,#f44336,#d32f2f);border-color:#b71c1c;}
-    
-    .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;align-items:center;justify-content:center;z-index:20000;}
-    .panel{background:#1a1a1a;border:8px solid #4ca64c;padding:20px;width:95%;max-width:900px;max-height:95vh;border-radius:8px;color:white;display:flex;flex-direction:column;overflow:auto;}
-    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px;}
-    .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:10px;}
-    .card{background:#222;border:4px solid #4ca64c;padding:12px;border-radius:6px;text-align:center;cursor:pointer;}
-    .card:hover{border-color:#fff;}
+    :root {
+      --grass: #5cb85c;
+      --darkgrass: #4a9c4a;
+      --dirt: #8b5a2b;
+      --stone: #555;
+      --gold: #f1c40f;
+    }
+
+    * { box-sizing: border-box; }
+    html,body {
+      height:100%; margin:0; 
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(180deg, #1e3a8a 0%, #3b82f6 100%);
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    header {
+      display:flex; align-items:center; gap:16px;
+      padding:20px 30px;
+      background: linear-gradient(180deg, var(--grass), var(--darkgrass));
+      box-shadow: 0 8px 0 var(--dirt);
+      border-bottom: 6px solid #3a3a3a;
+      position: relative;
+    }
+
+    .logo {
+      display:flex; align-items:center; gap:14px;
+      font-weight:900; font-size:26px; cursor:pointer;
+      text-shadow: 3px 3px 0 #000;
+    }
+    .logo .block {
+      width:56px; height:56px;
+      background: linear-gradient(135deg, #d97706, #b45309);
+      border:6px solid #fbbf24;
+      display:flex; align-items:center; justify-content:center;
+      font-size:28px; font-weight:bold;
+      box-shadow: 4px 4px 0 #000;
+    }
+
+    .btn {
+      background: linear-gradient(180deg, #4ade80, #22c55e);
+      border:4px solid #166534;
+      color: #111;
+      padding:12px 24px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:15px;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 0 #166534;
+    }
+    .btn.red {
+      background: linear-gradient(180deg, #f87171, #ef4444);
+      border-color: #991b1b;
+    }
+
+    .overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.95);
+      display:none; align-items:center; justify-content:center;
+      z-index:20000;
+    }
+    .panel {
+      background:#1f2528;
+      border:10px solid #4ade80;
+      padding:25px;
+      width:95%; max-width:920px;
+      max-height:92vh;
+      border-radius:12px;
+      color:white;
+      box-shadow: 0 0 40px rgba(74, 222, 128, 0.6);
+      overflow:auto;
+    }
+
+    .topbar {
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:20px;
+      padding-bottom:15px;
+      border-bottom:3px solid #4ade80;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap:20px;
+      margin-top:20px;
+    }
+
+    .card {
+      background: #272d31;
+      border:6px solid #4ade80;
+      border-radius:10px;
+      padding:16px;
+      text-align:center;
+      cursor:pointer;
+      transition: all 0.3s;
+      box-shadow: 6px 6px 0 #166534;
+    }
+    .card:hover {
+      transform: translateY(-12px) scale(1.04);
+      border-color: #fbbf24;
+      box-shadow: 8px 8px 0 #ca8a04;
+    }
 
     .user-item {
       display: flex; justify-content: space-between; align-items: center;
-      background:#222; padding:12px; margin:6px 0; border-radius:6px;
+      background:#2a2f34; padding:14px; margin:8px 0; border-radius:8px;
+      border-left:5px solid #4ade80;
     }
+
+    h2, h3, h4 { text-shadow: 2px 2px 0 #000; }
   </style>
 </head>
 <body>
   <!-- PASSWORD LOCK -->
   <div id="lockScreen">
-    <div style="background:#1a1a1a;border:8px solid #4ca64c;padding:40px 50px;border-radius:8px;text-align:center;max-width:380px;width:90%;">
-      <h2 style="color:#4ca64c;">🔒 BUB HUB</h2>
-      <p>Enter your password</p>
-      <input type="password" id="passInput" placeholder="Password" style="width:100%;padding:16px;font-size:20px;background:#222;color:white;border:5px solid #4ca64c;margin:15px 0;">
-      <button onclick="checkPassword()" class="btn" style="width:100%;">UNLOCK HUB</button>
-      <p id="lockMsg" style="color:#ff6666;margin-top:10px;"></p>
+    <div style="background:#1f2528;border:10px solid #4ade80;padding:50px 40px;border-radius:12px;text-align:center;max-width:400px;width:90%;box-shadow:0 0 40px rgba(74, 222, 128, 0.7);">
+      <h2 style="color:#4ade80;font-size:32px;margin:0 0 10px 0;">🔒 BUB HUB</h2>
+      <p style="margin:10px 0 20px;">Enter your password to continue</p>
+      <input type="password" id="passInput" placeholder="Password" style="width:100%;padding:18px;font-size:22px;background:#111;color:white;border:6px solid #4ade80;border-radius:8px;margin-bottom:15px;">
+      <button onclick="checkPassword()" class="btn" style="width:100%;padding:16px;font-size:18px;">UNLOCK HUB</button>
+      <p id="lockMsg" style="color:#ff6b6b;margin-top:15px;font-weight:bold;"></p>
     </div>
   </div>
 
@@ -46,8 +141,8 @@
     </div>
   </header>
 
-  <main style="max-width:1200px;margin:40px auto;padding:0 20px;">
-    <h2 style="text-align:center;color:#2f5f2f;">🎮 Your Local Games</h2>
+  <main style="max-width:1280px;margin:50px auto;padding:0 20px;">
+    <h2 style="text-align:center;color:#fff;font-size:32px;margin-bottom:30px;">🎮 Your Local Games</h2>
     <div class="grid">
       <div class="card" data-path="games/kdata.html" onclick="openProtectedGame(this)"><h3>Kdata Game Hub</h3></div>
       <div class="card" data-path="games/thegub.html" onclick="openProtectedGame(this)"><h3>thegub</h3></div>
@@ -65,56 +160,47 @@
       </div>
 
       <h3>Guest Password</h3>
-      <label>
+      <label style="font-size:17px;">
         <input type="checkbox" id="guestToggle" onchange="toggleGuest()">
         <strong>Enable Guest Password</strong>
       </label>
       <br><br>
-      <input type="text" id="guestPassInput" placeholder="Guest Password" style="width:70%;padding:10px;">
-      <button onclick="saveGuestPassword()" class="btn">Save Guest Password</button>
-      <p id="guestStatus" style="margin:8px 0;color:#ff0;"></p>
+      <input type="text" id="guestPassInput" placeholder="Guest Password" style="width:70%;padding:12px;font-size:16px;">
+      <button onclick="saveGuestPassword()" class="btn">Save</button>
+      <p id="guestStatus" style="margin:10px 0;color:#fbbf24;"></p>
 
-      <hr style="border-color:#444;margin:20px 0;">
+      <hr style="border-color:#4ade80;margin:25px 0;">
 
       <h3>Add New Friend (Limited Uses)</h3>
-      <input type="text" id="friendName" placeholder="Friend Name (e.g. Alex)" style="width:48%;padding:10px;margin-right:4%;">
-      <input type="text" id="friendPass" placeholder="Custom Password" style="width:48%;padding:10px;">
+      <input type="text" id="friendName" placeholder="Friend Name" style="width:48%;padding:12px;margin-right:4%;">
+      <input type="text" id="friendPass" placeholder="Custom Password" style="width:48%;padding:12px;">
       <br><br>
-      <input type="number" id="maxUses" placeholder="Max Uses" value="20" style="width:48%;padding:10px;">
+      <input type="number" id="maxUses" placeholder="Max Uses" value="20" style="width:48%;padding:12px;">
       <button onclick="addNewUser()" class="btn">Add Friend</button>
 
-      <h4 style="margin-top:25px;">Registered Friends</h4>
+      <h4 style="margin-top:30px;">Registered Friends</h4>
       <div id="usersList"></div>
 
-      <br>
-      <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ca64c;">👉 View Live Visitor Logs</a>
+      <br><br>
+      <a href="https://webhook.site/#!/view/90fcfad4-f313-4506-ac1c-1fb1a292031c" target="_blank" style="color:#4ade80;font-size:17px;">👉 View Live Visitor Logs</a>
     </div>
   </div>
 
   <script>
-    const ADMIN_PASS = "Password.";   // Admin password
+    const ADMIN_PASS = "Password.";
 
     let clickCount = 0;
 
-    // Session Management
-    function isLoggedIn() {
-      return localStorage.getItem('bubhub_logged_in') === 'true';
+    function isLoggedIn() { return localStorage.getItem('bubhub_logged_in') === 'true'; }
+    function setLoggedIn() { localStorage.setItem('bubhub_logged_in', 'true'); }
+    function forceLogout() { 
+      localStorage.removeItem('bubhub_logged_in'); 
+      localStorage.removeItem('bubhub_pass'); 
     }
 
-    function setLoggedIn() {
-      localStorage.setItem('bubhub_logged_in', 'true');
-    }
-
-    function forceLogout() {
-      localStorage.removeItem('bubhub_logged_in');
-      localStorage.removeItem('bubhub_pass');
-    }
-
-    // Limited use users
     function getUsers() { return JSON.parse(localStorage.getItem('bubhub_users') || '[]'); }
     function saveUsers(users) { localStorage.setItem('bubhub_users', JSON.stringify(users)); }
 
-    // Guest Password
     function getGuestPassword() { return localStorage.getItem('bubhub_guest_pass') || "guest123"; }
     function isGuestEnabled() { return localStorage.getItem('bubhub_guest_enabled') === 'true'; }
 
@@ -123,8 +209,8 @@
       if (pass) {
         localStorage.setItem('bubhub_guest_pass', pass);
         updateGuestStatus();
-        forceLogout();           // Force everyone to re-login
-        alert("Guest password updated! Everyone must re-enter password.");
+        forceLogout();
+        alert("Guest password updated! Everyone must re-login.");
       }
     }
 
@@ -132,15 +218,15 @@
       const enabled = document.getElementById('guestToggle').checked;
       localStorage.setItem('bubhub_guest_enabled', enabled);
       updateGuestStatus();
-      forceLogout();             // Force re-login
+      forceLogout();
     }
 
     function updateGuestStatus() {
       const enabled = isGuestEnabled();
       const pass = getGuestPassword();
       document.getElementById('guestToggle').checked = enabled;
-      document.getElementById('guestStatus').textContent = 
-        enabled ? `✅ Guest Mode ON (Password: ${pass})` : "Guest Mode OFF";
+      document.getElementById('guestStatus').textContent = enabled ? 
+        `✅ Guest Mode ON (Password: ${pass})` : "Guest Mode OFF";
     }
 
     function addNewUser() {
@@ -148,16 +234,13 @@
       const pass = document.getElementById('friendPass').value.trim();
       const maxUses = parseInt(document.getElementById('maxUses').value) || 10;
 
-      if (!name || !pass) {
-        alert("Name and Password are required!");
-        return;
-      }
+      if (!name || !pass) return alert("Name and Password required!");
 
       const users = getUsers();
       users.push({ name, password: pass, maxUses, used: 0 });
       saveUsers(users);
       renderUsers();
-      forceLogout();               // Force re-login after adding user
+      forceLogout();
       
       document.getElementById('friendName').value = '';
       document.getElementById('friendPass').value = '';
@@ -166,14 +249,10 @@
     function renderUsers() {
       const listEl = document.getElementById('usersList');
       const users = getUsers();
-      listEl.innerHTML = '';
+      listEl.innerHTML = users.length === 0 ? 
+        '<p style="color:#888;">No friends added yet.</p>' : '';
 
-      if (users.length === 0) {
-        listEl.innerHTML = '<p style="color:#888;">No friends added yet.</p>';
-        return;
-      }
-
-      users.forEach((user, index) => {
+      users.forEach((user, i) => {
         const remaining = user.maxUses - user.used;
         const div = document.createElement('div');
         div.className = 'user-item';
@@ -181,38 +260,32 @@
           <div>
             <strong>${user.name}</strong><br>
             <small>Pass: ${user.password}</small><br>
-            <small style="color:${remaining > 5 ? '#4ca64c' : '#ff0'}">
-              Uses: ${user.used}/${user.maxUses} (${remaining} left)
+            <small style="color:${remaining > 5 ? '#4ade80' : '#fbbf24'}">
+              ${user.used}/${user.maxUses} uses (${remaining} left)
             </small>
           </div>
-          <button onclick="removeUser(${index})" class="btn red" style="padding:6px 12px;">Remove</button>
+          <button onclick="removeUser(${i})" class="btn red">Remove</button>
         `;
         listEl.appendChild(div);
       });
     }
 
-    function removeUser(index) {
-      if (confirm("Remove this friend?")) {
+    function removeUser(i) {
+      if (confirm("Remove friend?")) {
         let users = getUsers();
-        users.splice(index, 1);
+        users.splice(i, 1);
         saveUsers(users);
         renderUsers();
         forceLogout();
       }
     }
 
-    // Login Check
     async function checkPassword() {
       const input = document.getElementById('passInput').value.trim();
       const msg = document.getElementById('lockMsg');
 
-      if (input === ADMIN_PASS) {
-        setLoggedIn();
-        unlockHub();
-        return;
-      }
-
-      if (isGuestEnabled() && input === getGuestPassword()) {
+      if (input === ADMIN_PASS || 
+          (isGuestEnabled() && input === getGuestPassword())) {
         setLoggedIn();
         unlockHub();
         return;
@@ -220,10 +293,9 @@
 
       const users = getUsers();
       const user = users.find(u => u.password === input);
-
       if (user) {
         if (user.used >= user.maxUses) {
-          msg.textContent = "❌ This password has reached its limit!";
+          msg.textContent = "❌ Password limit reached!";
         } else {
           user.used++;
           saveUsers(users);
@@ -232,7 +304,7 @@
         }
       } else {
         msg.textContent = "❌ Wrong password!";
-        setTimeout(() => msg.textContent = "", 2500);
+        setTimeout(() => msg.textContent = "", 2000);
       }
     }
 
@@ -248,9 +320,7 @@
           document.getElementById('adminPanel').style.display = 'flex';
           renderUsers();
           updateGuestStatus();
-        } else {
-          alert("❌ Wrong admin password!");
-        }
+        } else alert("❌ Wrong admin password!");
         clickCount = 0;
       }
       setTimeout(() => clickCount = 0, 2500);
@@ -260,34 +330,17 @@
       document.getElementById('adminPanel').style.display = 'none';
     }
 
-    // Protected Game Links
     function openProtectedGame(el) {
       if (!isLoggedIn()) {
-        alert("🔒 Please log in first!");
+        alert("🔒 Please log in first from the main page!");
         return;
       }
       const path = el.getAttribute('data-path');
       if (path) window.open(path, '_blank');
     }
 
-    // Auto log
-    async function autoLogVisitor() {
-      try {
-        const res = await fetch('https://api.ipify.org?format=json');
-        const { ip } = await res.json();
-        await fetch('https://webhook.site/90fcfad4-f313-4506-ac1c-1fb1a292031c', {
-          method: 'POST',
-          body: JSON.stringify({time: new Date().toLocaleString(), ip: ip, page: "Main Hub"}),
-          mode: 'no-cors'
-        });
-      } catch(e){}
-    }
-
     window.addEventListener('load', () => {
-      if (isLoggedIn()) {
-        document.getElementById('lockScreen').style.display = 'none';
-      }
-      autoLogVisitor();
+      if (isLoggedIn()) document.getElementById('lockScreen').style.display = 'none';
     });
   </script>
 </body>
