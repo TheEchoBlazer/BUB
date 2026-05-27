@@ -1,14 +1,12 @@
 <?php
 session_start();
 
-// Admin Password
 define('ADMIN_PASS', 'Password.');
+define('EMERGENCY_PASS', 'Emergency123!');   // ← EMERGENCY PASSWORD
 
-// Simple file-based storage
 $usersFile = 'users.json';
 $guestFile = 'guest.json';
 
-// Load data
 function loadUsers() {
     global $usersFile;
     if (file_exists($usersFile)) {
@@ -25,25 +23,25 @@ function saveUsers($users) {
 function getGuest() {
     global $guestFile;
     if (file_exists($guestFile)) {
-        return json_decode(file_get_contents($guestFile), true);
+        return json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'];
     }
     return ['enabled' => false, 'password' => 'guest123'];
 }
 
 function saveGuest($data) {
     global $guestFile;
-    file_put_contents($guestFile, json_encode($data));
+    file_put_contents($guestFile, json_encode($data, JSON_PRETTY_PRINT));
 }
 
 // Handle Login
-if ($_POST['login'] ?? false) {
+if (isset($_POST['login'])) {
     $pass = trim($_POST['password']);
     $users = loadUsers();
     $guest = getGuest();
 
-    if ($pass === ADMIN_PASS) {
+    if ($pass === ADMIN_PASS || $pass === EMERGENCY_PASS) {
         $_SESSION['logged_in'] = true;
-        $_SESSION['role'] = 'admin';
+        $_SESSION['is_admin'] = true;
     } elseif ($guest['enabled'] && $pass === $guest['password']) {
         $_SESSION['logged_in'] = true;
     } else {
@@ -58,7 +56,6 @@ if ($_POST['login'] ?? false) {
     }
 }
 
-// Logout
 if (isset($_GET['logout'])) {
     session_destroy();
     header("Location: index.php");
@@ -73,12 +70,15 @@ if (isset($_GET['logout'])) {
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>BUB Hub</title>
   <style>
-    body { margin:0; font-family:system-ui; background:linear-gradient(#1e3a8a,#3b82f6); color:white; min-height:100vh; }
-    .lock { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:1000; }
-    .box { background:#1f2528; border:10px solid #4ade80; padding:40px; border-radius:16px; text-align:center; max-width:400px; width:90%; }
-    .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; padding:20px; }
-    .card { background:#272d31; border:6px solid #4ade80; padding:20px; border-radius:12px; text-align:center; cursor:pointer; }
-    .card:hover { transform:scale(1.05); border-color:#fbbf24; }
+    body { margin:0; font-family:system-ui,sans-serif; background:linear-gradient(180deg, #1e3a8a, #3b82f6); color:white; min-height:100vh; }
+    header { background:linear-gradient(180deg, #5cb85c, #4a9c4a); padding:20px; text-align:center; font-size:28px; font-weight:bold; box-shadow:0 6px 0 #8b5a2b; }
+    .lock { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:10000; }
+    .box { background:#1f2528; border:12px solid #4ade80; padding:50px 40px; border-radius:16px; text-align:center; max-width:420px; width:90%; box-shadow:0 0 40px #4ade80; }
+    input { width:100%; padding:16px; font-size:20px; margin:15px 0; background:#111; color:white; border:5px solid #4ade80; border-radius:8px; }
+    button { width:100%; padding:16px; font-size:18px; font-weight:bold; background:#4ade80; color:black; border:none; border-radius:8px; cursor:pointer; }
+    .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(260px,1fr)); gap:20px; padding:40px; max-width:1300px; margin:auto; }
+    .card { background:#272d31; border:6px solid #4ade80; padding:25px; border-radius:12px; text-align:center; cursor:pointer; transition:0.3s; }
+    .card:hover { transform:scale(1.08); border-color:#fbbf24; }
   </style>
 </head>
 <body>
@@ -87,50 +87,36 @@ if (isset($_GET['logout'])) {
   <div class="lock">
     <div class="box">
       <h2>🔒 BUB HUB</h2>
-      <p>Enter your password</p>
+      <p>Enter your password to continue</p>
       <form method="post">
-        <input type="password" name="password" style="width:100%;padding:15px;font-size:18px;margin:15px 0;" required>
-        <button type="submit" name="login" style="width:100%;padding:15px;background:#4ade80;color:black;font-weight:bold;">UNLOCK HUB</button>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit" name="login">UNLOCK HUB</button>
       </form>
-      <?php if ($_POST['login'] ?? false): ?>
-        <p style="color:red;">Wrong password or limit reached.</p>
+      <?php if (isset($_POST['login'])): ?>
+        <p style="color:#ff6666; margin-top:10px;">❌ Wrong password or limit reached</p>
       <?php endif; ?>
     </div>
   </div>
 <?php endif; ?>
 
-<header style="background:#4a9c4a;padding:20px;text-align:center;font-size:24px;">
-  <div onclick="adminClick()" style="cursor:pointer;">BUB Hub</div>
+<header>
+  BUB Hub
+  <?php if (isset($_SESSION['logged_in'])): ?>
+    <a href="?logout=1" style="float:right; color:white; font-size:16px; margin-top:8px;">Logout</a>
+  <?php endif; ?>
 </header>
 
-<main style="max-width:1200px;margin:40px auto;">
-  <h2 style="text-align:center;">🎮 Your Local Games</h2>
+<?php if (isset($_SESSION['logged_in'])): ?>
+<main>
+  <h2 style="text-align:center; margin:30px 0;">🎮 Your Local Games</h2>
   <div class="grid">
-    <div class="card" onclick="openGame('games/kdata.html')">Kdata Game Hub</div>
-    <div class="card" onclick="openGame('games/thegub.html')">thegub</div>
-    <div class="card" onclick="openGame('games/thehub.html')">thehub</div>
-    <div class="card" onclick="openGame('games/myai.html')">MyAI - Echo</div>
+    <div class="card" onclick="window.open('games/kdata.html', '_blank')">Kdata Game Hub</div>
+    <div class="card" onclick="window.open('games/thegub.html', '_blank')">thegub</div>
+    <div class="card" onclick="window.open('games/thehub.html', '_blank')">thehub</div>
+    <div class="card" onclick="window.open('games/myai.html', '_blank')">MyAI - Echo</div>
   </div>
 </main>
+<?php endif; ?>
 
-<script>
-function openGame(path) {
-  window.open(path, '_blank');
-}
-
-let clicks = 0;
-function adminClick() {
-  clicks++;
-  if (clicks >= 5) {
-    const pass = prompt("Admin Password:");
-    if (pass === "<?= ADMIN_PASS ?>") {
-      window.location.href = "admin.php";
-    } else {
-      alert("Wrong admin password");
-    }
-    clicks = 0;
-  }
-}
-</script>
 </body>
 </html>
