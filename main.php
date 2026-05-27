@@ -2,7 +2,7 @@
 session_start();
 
 define('ADMIN_PASS', 'Password.');
-define('EMERGENCY_PASS', 'Emergency123!');   // ← EMERGENCY PASSWORD
+define('EMERGENCY_PASS', 'Emergency123!');   // ← Emergency Access
 
 $usersFile = 'users.json';
 $guestFile = 'guest.json';
@@ -58,7 +58,7 @@ if (isset($_POST['login'])) {
 
 if (isset($_GET['logout'])) {
     session_destroy();
-    header("Location: index.php");
+    header("Location: main.php");
     exit;
 }
 ?>
@@ -71,7 +71,7 @@ if (isset($_GET['logout'])) {
   <title>BUB Hub</title>
   <style>
     body { margin:0; font-family:system-ui,sans-serif; background:linear-gradient(180deg, #1e3a8a, #3b82f6); color:white; min-height:100vh; }
-    header { background:linear-gradient(180deg, #5cb85c, #4a9c4a); padding:20px; text-align:center; font-size:28px; font-weight:bold; box-shadow:0 6px 0 #8b5a2b; }
+    header { background:linear-gradient(180deg, #5cb85c, #4a9c4a); padding:20px; text-align:center; font-size:28px; font-weight:bold; box-shadow:0 6px 0 #8b5a2b; cursor:pointer; }
     .lock { position:fixed; inset:0; background:rgba(0,0,0,0.97); display:flex; align-items:center; justify-content:center; z-index:10000; }
     .box { background:#1f2528; border:12px solid #4ade80; padding:50px 40px; border-radius:16px; text-align:center; max-width:420px; width:90%; box-shadow:0 0 40px #4ade80; }
     input { width:100%; padding:16px; font-size:20px; margin:15px 0; background:#111; color:white; border:5px solid #4ade80; border-radius:8px; }
@@ -99,7 +99,7 @@ if (isset($_GET['logout'])) {
   </div>
 <?php endif; ?>
 
-<header>
+<header onclick="adminClick()">
   BUB Hub
   <?php if (isset($_SESSION['logged_in'])): ?>
     <a href="?logout=1" style="float:right; color:white; font-size:16px; margin-top:8px;">Logout</a>
@@ -118,5 +118,20 @@ if (isset($_GET['logout'])) {
 </main>
 <?php endif; ?>
 
+<script>
+let clicks = 0;
+function adminClick() {
+  clicks++;
+  if (clicks >= 5) {
+    const pass = prompt("Enter Admin Password:");
+    if (pass === "<?= ADMIN_PASS ?>" || pass === "<?= EMERGENCY_PASS ?>") {
+      window.location.href = "admin.php";
+    } else {
+      alert("Wrong admin password");
+    }
+    clicks = 0;
+  }
+}
+</script>
 </body>
 </html>
