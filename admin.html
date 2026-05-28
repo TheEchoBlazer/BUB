@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Panel - BUB Hub</title>
+  <style>
+    body {
+      margin:0; padding:20px;
+      background: linear-gradient(180deg, #1e3a8a, #3b82f6);
+      font-family: system-ui, sans-serif;
+      color: white;
+    }
+    .container {
+      max-width: 1000px;
+      margin: auto;
+      background: #1f2528;
+      border: 10px solid #4ade80;
+      border-radius: 16px;
+      padding: 30px;
+    }
+    input, button {
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 16px;
+    }
+    button {
+      background: #4ade80;
+      color: black;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .red { background: #ff6666; color: white; }
+    .user-item {
+      background: #2a2f34;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔧 ADMIN PANEL</h1>
+    <p><strong>Admin Password:</strong> <code>NewAdmin123!</code></p>
+    <a href="index.html" style="color:#4ade80; font-size:18px;">← Back to Hub</a>
+
+    <hr>
+
+    <h2>Guest Password</h2>
+    <input type="text" id="guestPass" placeholder="Guest Password" style="width:300px;">
+    <label><input type="checkbox" id="guestEnabled"> Enable Guest Mode</label>
+    <button onclick="saveGuest()">Save Guest Settings</button>
+
+    <h2>Add New Friend</h2>
+    <input type="text" id="friendName" placeholder="Friend Name">
+    <input type="text" id="friendPass" placeholder="Password">
+    <input type="number" id="maxUses" value="20">
+    <button onclick="addFriend()">Add Friend</button>
+
+    <h2>Registered Friends</h2>
+    <div id="usersList"></div>
+  </div>
+
+  <script>
+    function forceReLogin() {
+      localStorage.removeItem("bubhub_logged_in");
+      alert("✅ Changes saved! Everyone must re-enter password.");
+    }
+
+    function getUsers() {
+      return JSON.parse(localStorage.getItem('bubhub_users') || '[]');
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem('bubhub_users', JSON.stringify(users));
+      renderUsers();
+    }
+
+    function addFriend() {
+      const name = document.getElementById('friendName').value.trim();
+      const pass = document.getElementById('friendPass').value.trim();
+      const max = parseInt(document.getElementById('maxUses').value) || 10;
+
+      if (!name || !pass) return alert("Name and Password required!");
+
+      const users = getUsers();
+      users.push({ name, password: pass, maxUses: max, used: 0 });
+      saveUsers(users);
+      forceReLogin();
+
+      document.getElementById('friendName').value = '';
+      document.getElementById('friendPass').value = '';
+    }
+
+    function renderUsers() {
+      const list = document.getElementById('usersList');
+      const users = getUsers();
+      list.innerHTML = users.length === 0 ? '<p>No friends added yet.</p>' : '';
+
+      users.forEach((user, i) => {
+        const div = document.createElement('div');
+        div.className = 'user-item';
+        div.innerHTML = `
+          <div>
+            <strong>${user.name}</strong> — ${user.password}<br>
+            <small>Uses: ${user.used}/${user.maxUses}</small>
+          </div>
+          <button class="red" onclick="removeFriend(${i})">Remove</button>
+        `;
+        list.appendChild(div);
+      });
+    }
+
+    function removeFriend(i) {
+      if (confirm("Remove this friend?")) {
+        let users = getUsers();
+        users.splice(i, 1);
+        saveUsers(users);
+        forceReLogin();
+      }
+    }
+
+    function saveGuest() {
+      const pass = document.getElementById('guestPass').value.trim();
+      const enabled = document.getElementById('guestEnabled').checked;
+      localStorage.setItem('bubhub_guest_pass', pass);
+      localStorage.setItem('bubhub_guest_enabled', enabled);
+      forceReLogin();
+      alert("Guest settings saved!");
+    }
+
+    window.onload = () => {
+      document.getElementById('guestPass').value = localStorage.getItem('bubhub_guest_pass') || 'guest123';
+      document.getElementById('guestEnabled').checked = localStorage.getItem('bubhub_guest_enabled') === 'true';
+      renderUsers();
+    };
+  </script>
+</body>
+</html>
