@@ -35,7 +35,8 @@ function saveGuest($data) {
     file_put_contents($guestFile, json_encode($data, JSON_PRETTY_PRINT));
 }
 
-// Handle form actions
+$message = "";
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['action'])) {
         if ($_POST['action'] === 'add_user') {
@@ -47,17 +48,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'used' => 0
             ];
             saveUsers($users);
+            $message = "✅ Friend added!";
         }
         if ($_POST['action'] === 'remove_user') {
             $users = loadUsers();
             array_splice($users, (int)$_POST['index'], 1);
             saveUsers($users);
+            $message = "✅ User removed!";
         }
         if ($_POST['action'] === 'update_guest') {
             saveGuest([
                 'enabled' => isset($_POST['guest_enabled']),
                 'password' => trim($_POST['guest_password'])
             ]);
+            $message = "✅ Guest settings saved!";
         }
     }
 }
@@ -74,20 +78,24 @@ $guest = getGuest();
   <title>Admin Panel - BUB Hub</title>
   <style>
     body { font-family:system-ui; background:#0f1620; color:white; padding:20px; }
-    .container { max-width:900px; margin:auto; background:#1f2528; border:10px solid #4ade80; border-radius:16px; padding:30px; }
+    .container { max-width:1000px; margin:auto; background:#1f2528; border:10px solid #4ade80; border-radius:16px; padding:30px; }
     input, button { padding:12px; margin:6px 0; font-size:16px; }
     button { background:#4ade80; color:black; border:none; border-radius:6px; cursor:pointer; font-weight:bold; }
     .red { background:#ff6666; color:white; }
     .user-item { background:#2a2f34; padding:15px; margin:10px 0; border-radius:8px; display:flex; justify-content:space-between; align-items:center; }
+    .success { color:#4ade80; font-weight:bold; }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🔧 ADMIN PANEL</h1>
-    <a href="index.php" style="color:#4ade80; font-size:18px;">← Back to Hub</a> | 
+    <p><strong>Admin Password:</strong> <code>NewAdmin123!</code></p>
+    <a href="index.php">← Back to Hub</a> | 
     <a href="index.php?logout=1" style="color:#ff6666;">Logout</a>
 
-    <h2>Emergency Password: <code>Emergency123!</code></h2>
+    <?php if ($message): ?>
+      <p class="success"><?= $message ?></p>
+    <?php endif; ?>
 
     <hr>
 
@@ -104,7 +112,7 @@ $guest = getGuest();
       <input type="hidden" name="action" value="add_user">
       <input type="text" name="name" placeholder="Friend Name" required>
       <input type="text" name="password" placeholder="Password" required>
-      <input type="number" name="maxUses" value="20" placeholder="Max Uses">
+      <input type="number" name="maxUses" value="20">
       <button type="submit">Add Friend</button>
     </form>
 
