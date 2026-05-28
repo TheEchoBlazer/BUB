@@ -56,31 +56,17 @@
   </main>
 
   <script>
-    const ADMIN_PASS = "Password.";
+    const ADMIN_PASS = "NewAdmin123!";
     const EMERGENCY_PASS = "Emergency123!";
-
-    function isLoggedIn() {
-      return localStorage.getItem("bubhub_logged_in") === "true";
-    }
-
-    function forceLogout() {
-      localStorage.removeItem("bubhub_logged_in");
-      document.getElementById("lockScreen").style.display = "flex";
-      document.getElementById("mainContent").style.display = "none";
-    }
-
-    function loginSuccess() {
-      localStorage.setItem("bubhub_logged_in", "true");
-      document.getElementById("lockScreen").style.display = "none";
-      document.getElementById("mainContent").style.display = "block";
-    }
 
     function checkPassword() {
       const input = document.getElementById("passInput").value.trim();
       const msg = document.getElementById("msg");
 
       if (input === ADMIN_PASS || input === EMERGENCY_PASS) {
-        loginSuccess();
+        localStorage.setItem("bubhub_logged_in", "true");
+        document.getElementById("lockScreen").style.display = "none";
+        document.getElementById("mainContent").style.display = "block";
       } else {
         msg.textContent = "❌ Wrong password!";
         setTimeout(() => msg.textContent = "", 2500);
@@ -102,16 +88,11 @@
     }
 
     function openGame(path) {
-      if (!isLoggedIn()) {
-        alert("Please log in first!");
-        return;
-      }
       window.open(path, "_blank");
     }
 
-    // Load
     window.onload = () => {
-      if (isLoggedIn()) {
+      if (localStorage.getItem("bubhub_logged_in") === "true") {
         document.getElementById("lockScreen").style.display = "none";
         document.getElementById("mainContent").style.display = "block";
       }
