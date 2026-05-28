@@ -2,37 +2,12 @@
 session_start();
 
 $ADMIN_PASS = "NewAdmin123!";
-
-$usersFile = 'users.json';
-$guestFile = 'guest.json';
-
-function loadUsers() {
-    global $usersFile;
-    if (file_exists($usersFile)) {
-        return json_decode(file_get_contents($usersFile), true) ?: [];
-    }
-    return [];
-}
-
-function saveUsers($users) {
-    global $usersFile;
-    file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
-}
-
-function getGuest() {
-    global $guestFile;
-    if (file_exists($guestFile)) {
-        return json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'];
-    }
-    return ['enabled' => false, 'password' => 'guest123'];
-}
+$GUEST_PASS = "asd";   // ← You set this
 
 $error = "";
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     $pass = trim($_POST['password']);
-    $users = loadUsers();
-    $guest = getGuest();
 
     if ($pass === $ADMIN_PASS) {
         $_SESSION['logged_in'] = true;
@@ -41,23 +16,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
         exit;
     }
 
-    if ($guest['enabled'] && $pass === $guest['password']) {
+    if ($pass === $GUEST_PASS) {
         $_SESSION['logged_in'] = true;
         header("Location: main.php");
         exit;
     }
 
-    foreach ($users as &$user) {
-        if ($user['password'] === $pass && $user['used'] < $user['maxUses']) {
-            $user['used']++;
-            saveUsers($users);
-            $_SESSION['logged_in'] = true;
-            header("Location: main.php");
-            exit;
-        }
-    }
-
-    $error = "Wrong password or limit reached!";
+    $error = "Wrong password!";
 }
 
 if (isset($_GET['logout'])) {
@@ -94,8 +59,9 @@ if (isset($_GET['logout'])) {
         <button type="submit">UNLOCK HUB</button>
       </form>
       <?php if ($error): ?>
-        <p class="error">❌ <?= htmlspecialchars($error) ?></p>
+        <p class="error">❌ <?= $error ?></p>
       <?php endif; ?>
+      <p style="margin-top:10px; color:#aaa;">Guest Password: <strong>asd</strong></p>
     </div>
   </div>
 <?php endif; ?>
