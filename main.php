@@ -2,12 +2,57 @@
 session_start();
 
 $ADMIN_PASS = "NewAdmin123!";
-$GUEST_PASS = "asd";   // ← You set this
+
+$usersFile = 'users.json';
+$guestFile = 'guest.json';
+
+// Auto-create files if they don't exist
+if (!file_exists($usersFile)) {
+    file_put_contents($usersFile, '[]');
+}
+if (!file_exists($guestFile)) {
+    file_put_contents($guestFile, json_encode(['enabled' => false, 'password' => 'guest123']));
+}
+
+function loadUsers() {
+    global $usersFile;
+    if (file_exists($usersFile)) {
+        return json_decode(file_get_contents($usersFile), true) ?: [];
+    }
+    return [];
+}
+
+function saveUsers($users) {
+    global $usersFile;
+    file_put_contents($usersFile, json_encode($users, JSON_PRETTY_PRINT));
+}
+
+function getGuest() {
+    global $guestFile;
+    if (file_exists($guestFile)) {
+        return json_decode(file_get_contents($guestFile), true) ?: ['enabled' => false, 'password' => 'guest123'];
+    }
+    return ['enabled' => false, 'password' => 'guest123'];
+}
 
 $error = "";
 
+// Debug mode
+if (isset($_GET['debug'])) {
+    echo '<h2>Debug Info</h2>';
+    echo 'users.json exists: ' . (file_exists($usersFile) ? 'YES' : 'NO') . '<br>';
+    echo 'guest.json exists: ' . (file_exists($guestFile) ? 'YES' : 'NO') . '<br>';
+    echo 'Directory writable: ' . (is_writable('.') ? 'YES' : 'NO') . '<br>';
+    echo 'users.json content: ' . htmlspecialchars(file_get_contents($usersFile)) . '<br>';
+    echo 'guest.json content: ' . htmlspecialchars(file_get_contents($guestFile)) . '<br>';
+    die();
+}
+
+// Handle Login
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
     $pass = trim($_POST['password']);
+    $users = loadUsers();
+    $guest = getGuest();
 
     if ($pass === $ADMIN_PASS) {
         $_SESSION['logged_in'] = true;
@@ -16,13 +61,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['password'])) {
         exit;
     }
 
-    if ($pass === $GUEST_PASS) {
+    if ($guest['enabled'] && $pass === $guest['password']) {
         $_SESSION['logged_in'] = true;
         header("Location: main.php");
         exit;
     }
 
-    $error = "Wrong password!";
+    foreach ($users as &$user) {
+        if ($user['password'] === $pass && $user['used'] < $user['maxUses']) {
+            $user['used']++;
+            saveUsers($users);
+            $_SESSION['logged_in'] = true;
+            header("Location: main.php");
+            exit;
+        }
+    }
+
+    $error = "Wrong password or limit reached!";
 }
 
 if (isset($_GET['logout'])) {
@@ -59,7 +114,7 @@ if (isset($_GET['logout'])) {
         <button type="submit">UNLOCK HUB</button>
       </form>
       <?php if ($error): ?>
-        <p class="error">❌ <?= $error ?></p>
+        <p class="error">❌ <?= htmlspecialchars($error) ?></p>
       <?php endif; ?>
       <p style="margin-top:10px; color:#aaa;">Guest Password: <strong>asd</strong></p>
     </div>
