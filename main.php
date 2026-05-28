@@ -53,7 +53,7 @@ if (isset($_GET['logout'])) {
         <button type="submit">UNLOCK HUB</button>
       </form>
       <?php if ($error): ?>
-        <p class="error">❌ <?= $error ?></p>
+        <p class="error">❌ <?= htmlspecialchars($error) ?></p>
       <?php endif; ?>
       <p style="margin-top:15px; color:#aaa;">Emergency: <strong>Emergency123!</strong></p>
     </div>
