@@ -23,6 +23,15 @@
     .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:20px; padding:40px; max-width:1300px; margin:auto; }
     .card { background:#272d31; border:6px solid #4ade80; padding:30px; border-radius:12px; text-align:center; cursor:pointer; transition:0.3s; }
     .card:hover { transform:scale(1.08); border-color:#fbbf24; }
+
+    .update-banner {
+      background: #ffeb3b;
+      color: black;
+      text-align: center;
+      padding: 8px;
+      font-weight: bold;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -43,6 +52,11 @@
   <header style="background:#4a9c4a; padding:20px; text-align:center; font-size:28px; font-weight:bold; cursor:pointer;" onclick="adminClick()">
     BUB Hub
   </header>
+
+  <!-- UPDATE BANNER -->
+  <div class="update-banner">
+    UPDATED v2.1 - Changes Applied
+  </div>
 
   <!-- MAIN CONTENT -->
   <main id="mainContent" style="display:none; padding:40px; text-align:center;">
