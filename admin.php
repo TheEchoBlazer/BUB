@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 'used' => 0
             ];
             saveUsers($users);
-            $message = "✅ Friend added!";
+            $message = "✅ Friend added successfully!";
         }
         if ($_POST['action'] === 'remove_user') {
             $users = loadUsers();
